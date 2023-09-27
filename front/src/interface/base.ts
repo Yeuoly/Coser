@@ -37,8 +37,8 @@ export const apiBase = <T>(url: string, method: RequestMethods, args: any) => ne
                 const data = await axios.post<Response>(url, args, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'Meduoduo-User-Id': uid,
-                        'Meduoduo-User-Token': token
+                        'Billboards-User-Id': uid,
+                        'Billboards-User-Token': token
                     }
                 })
                 const response = new Response<T>()
