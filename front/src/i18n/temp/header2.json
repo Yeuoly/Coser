@@ -1,0 +1,20 @@
+{
+	"zh": {
+		"layout.Header.776236-0": "个人信息",
+		"layout.Header.776236-1": "充值",
+		"layout.Header.776236-5": "退出",
+		"layout.Header.776236-6": "登录"
+	},
+	"en": {
+		"layout.Header.776236-0": "Profile",
+		"layout.Header.776236-1": "Recharge",
+		"layout.Header.776236-5": "Quit",
+		"layout.Header.776236-6": "Login"
+	},
+	"ja": {
+		"layout.Header.776236-0": "プロフィール",
+		"layout.Header.776236-1": "チャージ",
+		"layout.Header.776236-5": "ログアウト",
+		"layout.Header.776236-6": "ログイン"
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"zh": {
+		"auth.login.596980-0": "游客",
+		"auth.login.596980-1": "未登录"
+	},
+	"en": {
+		"auth.login.596980-0": "Tourist",
+		"auth.login.596980-1": "Not logged in"
+	},
+	"ja": {
+		"auth.login.596980-0": "ゲスト",
+		"auth.login.596980-1": "未ログイン"
+	}
+}

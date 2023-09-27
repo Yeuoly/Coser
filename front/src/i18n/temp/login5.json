@@ -1,0 +1,47 @@
+{
+	"zh": {
+		"views.LogIn.169953-0": "登录",
+		"views.LogIn.169953-1": "邮箱",
+		"views.LogIn.169953-2": "请输入邮箱",
+		"views.LogIn.169953-3": "密码",
+		"views.LogIn.169953-4": "请输入密码",
+		"views.LogIn.169953-5": "注册",
+		"views.LogIn.169953-6": "用户名",
+		"views.LogIn.169953-7": "请输入用户名",
+		"views.LogIn.169953-8": "第三方登录",
+		"views.LogIn.169953-9": "用户名长度不能小于4位",
+		"views.LogIn.169953-10": "邮箱格式不正确",
+		"views.LogIn.169953-11": "密码长度不能小于6位",
+		"views.LogIn.169953-12": "请检查表单"
+	},
+	"en": {
+		"views.LogIn.169953-0": "Login",
+		"views.LogIn.169953-1": "Email",
+		"views.LogIn.169953-2": "Please enter your email",
+		"views.LogIn.169953-3": "Password",
+		"views.LogIn.169953-4": "Please enter your password",
+		"views.LogIn.169953-5": "Register",
+		"views.LogIn.169953-6": "Username",
+		"views.LogIn.169953-7": "Please enter your username",
+		"views.LogIn.169953-8": "Third party login",
+		"views.LogIn.169953-9": "The length of the user name cannot be less than 4",
+		"views.LogIn.169953-10": "The format of the e-mail is incorrect",
+		"views.LogIn.169953-11": "The length of the password cannot be less than 6",
+		"views.LogIn.169953-12": "Please check the form"
+	},
+	"ja": {
+		"views.LogIn.169953-0": "ログイン",
+		"views.LogIn.169953-1": "メールアドレス",
+		"views.LogIn.169953-2": "メールアドレスを入力してください",
+		"views.LogIn.169953-3": "パスワード",
+		"views.LogIn.169953-4": "パスワードを入力してください",
+		"views.LogIn.169953-5": "新規登録",
+		"views.LogIn.169953-6": "ユーザー名",
+		"views.LogIn.169953-7": "ユーザー名を入力してください",
+		"views.LogIn.169953-8": "サードパーティによるログイン",
+		"views.LogIn.169953-9": "ユーザー名は4文字以上で入力してください",
+		"views.LogIn.169953-10": "メールアドレスの形式を正しく入力してください",
+		"views.LogIn.169953-11": "パスワードは6文字以上で入力してください",
+		"views.LogIn.169953-12": "フォームを確認してください"
+	}
+}

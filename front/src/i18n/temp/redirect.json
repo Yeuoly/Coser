@@ -1,0 +1,29 @@
+{
+	"zh": {
+		"views.Redirect.169953-0": "Billboards正在疯狂加班中...",
+		"views.Redirect.169953-1": "登录成功",
+		"views.Redirect.169953-2": "人生苦短，我用Billboards",
+		"views.Redirect.169953-3": "处理失败",
+		"views.Redirect.169953-4": "你不喜欢有的人总喜欢给你画饼，你却发现，你比他们还能画",
+		"views.Redirect.169953-5": "画饼也是一种艺术，有的人能落地，有的人却只能画饼",
+		"views.Redirect.169953-6": "登录失败"
+	},
+	"en": {
+		"views.Redirect.169953-0": "Billboards is working stay up late...",
+		"views.Redirect.169953-1": "Login success",
+		"views.Redirect.169953-2": "Life is hard, I use Billboards",
+		"views.Redirect.169953-3": "Processing failed",
+		"views.Redirect.169953-4": "You don't like that some people always draw you a pie in the air, but you find that you can draw more than they do",
+		"views.Redirect.169953-5": "Drawing a pie is also an art. Some people can land, but some people just draw a pie",
+		"views.Redirect.169953-6": "Login failed"
+	},
+	"ja": {
+		"views.Redirect.169953-0": "Billboardsは精一杯に頑張っています...",
+		"views.Redirect.169953-1": "ログイン完了",
+		"views.Redirect.169953-2": "人生は短い，Billboardsを使うべきだ",
+		"views.Redirect.169953-3": "処理失敗",
+		"views.Redirect.169953-4": "絵に描いた餅を嫌う君はもっと上手く描いた",
+		"views.Redirect.169953-5": "餅を描くこともアートです。一部の人は実現できますが、一部の人は描くだけです",
+		"views.Redirect.169953-6": "ログインできませんでした"
+	}
+}

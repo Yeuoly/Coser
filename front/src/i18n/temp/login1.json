@@ -1,0 +1,41 @@
+{
+	"zh": {
+		"views.LogIn.621117-0": "验证码",
+		"views.LogIn.621117-1": "输入验证码",
+		"views.LogIn.621117-2": "来做一个小学算术",
+		"views.LogIn.621117-3": "输入图片验证码",
+		"views.LogIn.621117-4": "发送邮件验证码",
+		"views.LogIn.621117-5": "输入邮件验证码",
+		"views.LogIn.621117-6": "邀请码，如不存在则留空",
+		"views.LogIn.621117-7": "邮件已发送",
+		"views.LogIn.621117-8": "登录失败，请检查验证码",
+		"views.LogIn.621117-9": "注册成功，请登录",
+		"views.LogIn.621117-10": "注册失败，请检查验证码"
+	},
+	"en": {
+		"views.LogIn.621117-0": "Verification Code",
+		"views.LogIn.621117-1": "Please enter verification code",
+		"views.LogIn.621117-2": "Let's do some primary school arithmetic",
+		"views.LogIn.621117-3": "Enter image verification code",
+		"views.LogIn.621117-4": "Send email verification code",
+		"views.LogIn.621117-5": "Enter email verification code",
+		"views.LogIn.621117-6": "Invitation code, if it does not exist, leave it blank",
+		"views.LogIn.621117-7": "Email sent",
+		"views.LogIn.621117-8": "Login failed, please check the verification code",
+		"views.LogIn.621117-9": "Registration successful, please login",
+		"views.LogIn.621117-10": "Registration failed, please check the verification code"
+	},
+	"ja": {
+		"views.LogIn.621117-0": "認証コード",
+		"views.LogIn.621117-1": "認証コードを入力してください",
+		"views.LogIn.621117-2": "小学校算数をやってみましょう",
+		"views.LogIn.621117-3": "画像認証コードを入力してください",
+		"views.LogIn.621117-4": "メール認証コードを送信する",
+		"views.LogIn.621117-5": "メール認証コードを入力してください",
+		"views.LogIn.621117-6": "招待コードが存在しない場合は空白のままにしてください",
+		"views.LogIn.621117-7": "メールが送信されました",
+		"views.LogIn.621117-8": "ログインに失敗しました。認証コードを確認してください",
+		"views.LogIn.621117-9": "登録に成功しました。ログインしてください",
+		"views.LogIn.621117-10": "登録に失敗しました。認証コードを確認してください"
+	}
+}

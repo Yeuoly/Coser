@@ -1,0 +1,11 @@
+{
+	"zh": {
+		"views.Redirect.222093-0": "您未登录或登录已过期，请重新登录"
+	},
+	"en": {
+		"views.Redirect.222093-0": "You are not logged in or your login has expired. Please log in again"
+	},
+	"ja": {
+		"views.Redirect.222093-0": "未ログインまたはログインが期限切れです。再度ログインしてください。"
+	}
+}

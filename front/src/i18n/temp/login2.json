@@ -1,0 +1,11 @@
+{
+	"zh": {
+		"views.LogIn.914867-0": "登录成功，正在跳转..."
+	},
+	"en": {
+		"views.LogIn.914867-0": "Login success, redirecting..."
+	},
+	"ja": {
+		"views.LogIn.914867-0": "ログイン成功、移動中..."
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"zh": {
+		"views.LogIn.598212-0": "登录超时"
+	},
+	"en": {
+		"views.LogIn.598212-0": "Login timeout"
+	},
+	"ja": {
+		"views.LogIn.598212-0": "ログインタイムアウト"
+	}
+}

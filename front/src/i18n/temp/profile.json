@@ -1,0 +1,23 @@
+{
+	"zh": {
+		"user.Profile.157805-0": "修改资料",
+		"user.Profile.157805-1": "头像",
+		"user.Profile.157805-2": "点击上传新头像",
+		"user.Profile.157805-3": "用户名",
+		"user.Profile.157805-4": "签名"
+	},
+	"en": {
+		"user.Profile.157805-0": "Modify Profile",
+		"user.Profile.157805-1": "Avatar",
+		"user.Profile.157805-2": "Click to upload new avatar",
+		"user.Profile.157805-3": "Username",
+		"user.Profile.157805-4": "Personalized message"
+	},
+	"ja": {
+		"user.Profile.157805-0": "プロフィールを変更する",
+		"user.Profile.157805-1": "アイコン",
+		"user.Profile.157805-2": "クリックしてアイコンをアップロードする",
+		"user.Profile.157805-3": "ユーザー名",
+		"user.Profile.157805-4": "自己紹介文"
+	}
+}
