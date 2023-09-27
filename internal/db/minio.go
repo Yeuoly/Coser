@@ -22,7 +22,7 @@ var (
 func InitMinio() error {
 	var err error
 
-	config := static.GetBocchiGlobalConfigurations()
+	config := static.GetBillboardsGlobalConfigurations()
 	minioEndpoint = fmt.Sprintf("%s:%d", config.Minio.Host, config.Minio.Port)
 	minioAccessKey = config.Minio.AK
 	minioSecretKey = config.Minio.SK

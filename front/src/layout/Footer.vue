@@ -1,6 +1,6 @@
 <template>
     <NLayoutFooter bordered class="m-l-footer">
-        © 2023 Miduoduo Project. Made with ❤️ by Miduoduo community, Inc.
+        © 2023 Billboards Project. Made with ❤️ by Yeuoly.
     </NLayoutFooter>
 </template>
 

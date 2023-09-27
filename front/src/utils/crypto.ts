@@ -1,7 +1,7 @@
 import md5 from 'md5'
 
 export const hashPassword = (password: string) => {
-    return md5('bocchi_password' + password + 'any_salt_about_you~')
+    return md5('billboards_password' + password + 'any_salt_about_you~')
 }
 
 export const randomString = (length: number) => {

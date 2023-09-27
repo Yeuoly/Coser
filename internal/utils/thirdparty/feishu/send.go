@@ -2,15 +2,15 @@ package email
 
 import "gopkg.in/gomail.v2"
 
-type BocchiEmailManager struct {
+type BillboardsEmailManager struct {
 	host string
 	port int
 	user string
 	pass string
 }
 
-func NewBocchiEmailManager(host string, port int, user string, pass string) *BocchiEmailManager {
-	return &BocchiEmailManager{
+func NewBillboardsEmailManager(host string, port int, user string, pass string) *BillboardsEmailManager {
+	return &BillboardsEmailManager{
 		host: host,
 		port: port,
 		user: user,
@@ -18,12 +18,12 @@ func NewBocchiEmailManager(host string, port int, user string, pass string) *Boc
 	}
 }
 
-func (c *BocchiEmailManager) SendMail(to string, subject string, text string) error {
+func (c *BillboardsEmailManager) SendMail(to string, subject string, text string) error {
 	d := gomail.NewDialer(c.host, c.port, c.user, c.pass)
 	m := gomail.NewMessage()
 	m.SetHeader("From", c.user)
 	m.SetHeader("To", to)
-	m.SetAddressHeader("Miduoduo", c.user, "Miduoduo")
+	m.SetAddressHeader("Billboards", c.user, "Billboards")
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/plain", text)
 	if err := d.DialAndSend(m); err != nil {

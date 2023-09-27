@@ -7,10 +7,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var bocchiGlobalConfigurations types.BillboardsGlobalConfigurations
+var billboardsGlobalConfigurations types.BillboardsGlobalConfigurations
 
 func InitConfig(path string) error {
-	bocchiGlobalConfigurations = types.BillboardsGlobalConfigurations{}
+	billboardsGlobalConfigurations = types.BillboardsGlobalConfigurations{}
 
 	// read config file
 	configFile, err := os.Open(path)
@@ -22,7 +22,7 @@ func InitConfig(path string) error {
 
 	// parse config file
 	decoder := yaml.NewDecoder(configFile)
-	err = decoder.Decode(&bocchiGlobalConfigurations)
+	err = decoder.Decode(&billboardsGlobalConfigurations)
 	if err != nil {
 		return err
 	}
@@ -31,6 +31,6 @@ func InitConfig(path string) error {
 }
 
 // avoid global modification, use value copy instead
-func GetBocchiGlobalConfigurations() types.BillboardsGlobalConfigurations {
-	return bocchiGlobalConfigurations
+func GetBillboardsGlobalConfigurations() types.BillboardsGlobalConfigurations {
+	return billboardsGlobalConfigurations
 }

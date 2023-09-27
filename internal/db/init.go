@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitBocchiDB(host string, port int, user string, pass string) error {
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=bocchi sslmode=disable", host, port, user, pass)
+func InitBillboardsDB(host string, port int, user string, pass string) error {
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=billboards sslmode=disable", host, port, user, pass)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return err
@@ -22,15 +22,15 @@ func InitBocchiDB(host string, port int, user string, pass string) error {
 	}
 	pgsqlDB.SetConnMaxIdleTime(time.Minute * 1)
 
-	bocchiDB = db
+	billboardsDB = db
 	return nil
 }
 
 func RegisterModel() {
-	bocchiDB.AutoMigrate(&types.User{})
-	bocchiDB.AutoMigrate(&types.UserProfile{})
-	bocchiDB.AutoMigrate(&types.Password{})
-	bocchiDB.AutoMigrate(&types.UserGithubBind{})
+	billboardsDB.AutoMigrate(&types.User{})
+	billboardsDB.AutoMigrate(&types.UserProfile{})
+	billboardsDB.AutoMigrate(&types.Password{})
+	billboardsDB.AutoMigrate(&types.UserGithubBind{})
 }
 
 func InitModel() error {

@@ -6,6 +6,6 @@ services:
     environment:
       - POSTGRES_PASSWORD=root
     volumes:
-      - ~/Database/bocchi:/var/lib/postgresql/data
+      - ~/Database/billboards:/var/lib/postgresql/data
     ports:
       - 5432:5432

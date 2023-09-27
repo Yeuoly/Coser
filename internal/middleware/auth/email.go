@@ -10,14 +10,14 @@ import (
 )
 
 var (
-	emailManager *email.BocchiEmailManager
+	emailManager *email.BillboardsEmailManager
 )
 
 // SendVercodeEmail sends verification code to user's email and return the encrypted vercode
 func SendVercodeEmail(to string, text string, method string) (string, error) {
 	if emailManager == nil {
-		config := static.GetBocchiGlobalConfigurations()
-		emailManager = email.NewBocchiEmailManager(
+		config := static.GetBillboardsGlobalConfigurations()
+		emailManager = email.NewBillboardsEmailManager(
 			config.Email.Host,
 			config.Email.Port,
 			config.Email.User,
@@ -28,7 +28,7 @@ func SendVercodeEmail(to string, text string, method string) (string, error) {
 	result := strconv.Itoa(math.Random(100000, 999999))
 	vercode := NewEmailVercode(to, result, 3, method)
 
-	err := emailManager.SendMail(to, "Bocchi Verification Code", text+"\n Your verification code is: "+result+"\n\n This code will expire in 5 minutes.")
+	err := emailManager.SendMail(to, "Billboards Verification Code", text+"\n Your verification code is: "+result+"\n\n This code will expire in 5 minutes.")
 	if err != nil {
 		return "", err
 	}

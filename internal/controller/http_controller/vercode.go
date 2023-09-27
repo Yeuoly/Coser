@@ -30,8 +30,8 @@ func HandleEmailRegisterVercode(c *gin.Context) {
 	}
 	controller.BindRequest[reqeust](c, func(r reqeust) {
 		c.JSON(200, http_service.EmailVercode(r.PreVercodeToken, r.PreVercodeResult, "normal_register", r.Email, fmt.Sprintf(
-			"You are trying to register a miduoduo account with your email %s, please enter the verification code below to continue."+
-				"Remember, do not tell anyone this code, including the staff of miduoduo, otherwise your account may be stolen.",
+			"You are trying to register a billboards account with your email %s, please enter the verification code below to continue."+
+				"Remember, do not tell anyone this code, including the staff of billboards, otherwise your account may be stolen.",
 			r.Email,
 		), "normal_register"))
 	})

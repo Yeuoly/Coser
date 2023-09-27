@@ -20,8 +20,8 @@ func initConfig() {
 }
 
 func initDB() {
-	config := static.GetBocchiGlobalConfigurations()
-	err := db.InitBocchiDB(config.DB.Host, config.DB.Port, config.DB.User, config.DB.Pass)
+	config := static.GetBillboardsGlobalConfigurations()
+	err := db.InitBillboardsDB(config.DB.Host, config.DB.Port, config.DB.User, config.DB.Pass)
 	if err != nil {
 		log.Panic("failed to init database: %v", err)
 	}
@@ -29,7 +29,7 @@ func initDB() {
 	db.RegisterModel()
 	log.Info("database register model success")
 
-	db.InitBocchiRedis()
+	db.InitBillboardsRedis()
 	log.Info("redis init success")
 
 	err = db.InitModel()
@@ -40,7 +40,7 @@ func initDB() {
 }
 
 func initServer() {
-	config := static.GetBocchiGlobalConfigurations()
+	config := static.GetBillboardsGlobalConfigurations()
 	if !config.App.Debug {
 		gin.SetMode(gin.ReleaseMode)
 	}

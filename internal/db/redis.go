@@ -24,8 +24,8 @@ type CacheManager struct {
 	Client *redis.Client
 }
 
-func InitBocchiRedis() {
-	config := static.GetBocchiGlobalConfigurations()
+func InitBillboardsRedis() {
+	config := static.GetBillboardsGlobalConfigurations()
 	redis_host = config.Redis.Host
 	redis_port = config.Redis.Port
 	redis_pass = config.Redis.Pass
@@ -50,7 +50,7 @@ func NewCacheManager() *CacheManager {
 }
 
 func (client *CacheManager) GetRedisKey(namespace string, key string) string {
-	return "bocchi_web_" + namespace + "_" + key
+	return "billboards_web_" + namespace + "_" + key
 }
 
 func (client *CacheManager) SetNX(key string, value interface{}, expiration time.Duration) error {

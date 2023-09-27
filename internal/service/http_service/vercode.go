@@ -5,7 +5,7 @@ import (
 	"github.com/Yeuoly/billboards/internal/types"
 )
 
-func EmailVercode(pre_vercode_token string, per_vercode_result string, pre_method string, email string, prompt string, method string) *types.BocchiResponse {
+func EmailVercode(pre_vercode_token string, per_vercode_result string, pre_method string, email string, prompt string, method string) *types.BillboardsResponse {
 	// check vercode
 	pre_vercode_obj, err := auth.ImageVercodeFromToken(pre_vercode_token)
 	if err != nil {
@@ -28,7 +28,7 @@ func EmailVercode(pre_vercode_token string, per_vercode_result string, pre_metho
 	return types.SuccessResponse(response{Token: token})
 }
 
-func ImageVercode(method string) *types.BocchiResponse {
+func ImageVercode(method string) *types.BillboardsResponse {
 	type response struct {
 		Token string `json:"token"`
 		Image string `json:"image"`

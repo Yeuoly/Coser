@@ -12,7 +12,7 @@ import (
 	"github.com/Yeuoly/billboards/internal/utils/math"
 )
 
-func UserCheck(user *types.User) *types.BocchiResponse {
+func UserCheck(user *types.User) *types.BillboardsResponse {
 	var response struct {
 		Username string `json:"username"`
 		Role     string `json:"role"`
@@ -25,7 +25,7 @@ func UserCheck(user *types.User) *types.BocchiResponse {
 	return types.SuccessResponse(response)
 }
 
-func UserLogin(email, password, vercode_token, vercode string) *types.BocchiResponse {
+func UserLogin(email, password, vercode_token, vercode string) *types.BillboardsResponse {
 	type response struct {
 		Success    bool   `json:"success"`
 		NewToken   string `json:"new_token"`
@@ -76,7 +76,7 @@ func UserLogin(email, password, vercode_token, vercode string) *types.BocchiResp
 	})
 }
 
-func UserRegister(username, password, vercode, vercode_token, invite_code string) *types.BocchiResponse {
+func UserRegister(username, password, vercode, vercode_token, invite_code string) *types.BillboardsResponse {
 	type response struct {
 		Success  bool   `json:"success"`
 		NewToken string `json:"new_token"`
@@ -120,7 +120,7 @@ func UserRegister(username, password, vercode, vercode_token, invite_code string
 	return resp
 }
 
-func UserLoginGithub(code string) *types.BocchiResponse {
+func UserLoginGithub(code string) *types.BillboardsResponse {
 	type response struct {
 		Success    bool   `json:"success"`
 		LoginToken string `json:"login_token"`
@@ -145,7 +145,7 @@ func UserLoginGithub(code string) *types.BocchiResponse {
 	})
 }
 
-func UserProfile(user *types.User) *types.BocchiResponse {
+func UserProfile(user *types.User) *types.BillboardsResponse {
 	var response struct {
 		Username     string            `json:"username"`
 		InviteCode   string            `json:"invite_code"`
@@ -159,7 +159,7 @@ func UserProfile(user *types.User) *types.BocchiResponse {
 	return types.SuccessResponse(response)
 }
 
-func UserUpdate(user *types.User, username string, avatar string, sign string) *types.BocchiResponse {
+func UserUpdate(user *types.User, username string, avatar string, sign string) *types.BillboardsResponse {
 	type response struct {
 		Success bool `json:"success"`
 	}
@@ -182,7 +182,7 @@ type UserKasumiLoginToken struct {
 	Uid    uint `json:"uid"`
 }
 
-func UserRequestLoginKasumiAccept(user *types.User, token string) *types.BocchiResponse {
+func UserRequestLoginKasumiAccept(user *types.User, token string) *types.BillboardsResponse {
 	type response struct {
 		Success bool `json:"success"`
 	}
@@ -201,7 +201,7 @@ func UserRequestLoginKasumiAccept(user *types.User, token string) *types.BocchiR
 	return types.SuccessResponse(response{true})
 }
 
-func UserRequestLoginKasumiCheck(token string) *types.BocchiResponse {
+func UserRequestLoginKasumiCheck(token string) *types.BillboardsResponse {
 	type response struct {
 		Success bool   `json:"success"`
 		Token   string `json:"token"`

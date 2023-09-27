@@ -27,7 +27,7 @@ var (
 
 func LoginWithGithub(code string) (*types.User, error) {
 	if github_client_id == "" {
-		config := static.GetBocchiGlobalConfigurations()
+		config := static.GetBillboardsGlobalConfigurations()
 		github_client_id = config.Github.ClientID
 		github_client_secret = config.Github.ClientSecret
 		github_redirect_uri = config.Github.RedirectURI
@@ -85,7 +85,7 @@ func LoginWithGithub(code string) (*types.User, error) {
 	}
 
 	// create user
-	user, err := user.CreateUser(github_username, fmt.Sprintf("customer_github_%d@miduoduo.org", github_id), "", func(u *types.User) error {
+	user, err := user.CreateUser(github_username, fmt.Sprintf("customer_github_%d@billboards.org", github_id), "", func(u *types.User) error {
 		// create github_bind
 		github_bind := &types.UserGithubBind{
 			UserID:     u.ID,

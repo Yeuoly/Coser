@@ -5,7 +5,7 @@ import (
 	"github.com/Yeuoly/billboards/internal/types"
 )
 
-func AdminSearchUser(user *types.User, username string) *types.BocchiResponse {
+func AdminSearchUser(user *types.User, username string) *types.BillboardsResponse {
 	type response struct {
 		Users []types.User `json:"users"`
 	}
@@ -26,7 +26,7 @@ func AdminSearchUser(user *types.User, username string) *types.BocchiResponse {
 	})
 }
 
-func AdminListUser(user *types.User, page int) *types.BocchiResponse {
+func AdminListUser(user *types.User, page int) *types.BillboardsResponse {
 	type response struct {
 		Users []types.User `json:"users"`
 		Total uint         `json:"total"`

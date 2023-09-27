@@ -8,7 +8,7 @@ import (
 )
 
 func Cors() gin.HandlerFunc {
-	config := static.GetBocchiGlobalConfigurations()
+	config := static.GetBillboardsGlobalConfigurations()
 	return func(c *gin.Context) {
 		// get origin
 		origin := c.Request.Header.Get("Origin")

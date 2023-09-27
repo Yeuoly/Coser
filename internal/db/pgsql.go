@@ -11,7 +11,7 @@ import (
 	ORM for pgsql
 */
 
-var bocchiDB *gorm.DB
+var billboardsDB *gorm.DB
 
 var (
 	ErrDatabaseNotFound = gorm.ErrRecordNotFound
@@ -21,35 +21,35 @@ func Create(data any, ctx ...*gorm.DB) error {
 	if len(ctx) > 0 {
 		return ctx[0].Create(data).Error
 	}
-	return bocchiDB.Create(data).Error
+	return billboardsDB.Create(data).Error
 }
 
 func Update(data any, ctx ...*gorm.DB) error {
 	if len(ctx) > 0 {
 		return ctx[0].Save(data).Error
 	}
-	return bocchiDB.Save(data).Error
+	return billboardsDB.Save(data).Error
 }
 
 func Delete(data any, ctx ...*gorm.DB) error {
 	if len(ctx) > 0 {
 		return ctx[0].Delete(data).Error
 	}
-	return bocchiDB.Delete(data).Error
+	return billboardsDB.Delete(data).Error
 }
 
 func ReplaceAssociation[T any, R any](source *T, field string, associations []R, ctx ...*gorm.DB) error {
 	if len(ctx) > 0 {
 		return ctx[0].Model(source).Association(field).Replace(associations)
 	}
-	return bocchiDB.Model(source).Association(field).Replace(associations)
+	return billboardsDB.Model(source).Association(field).Replace(associations)
 }
 
 func AppendAssociation[T any, R any](source *T, field string, associations R, ctx ...*gorm.DB) error {
 	if len(ctx) > 0 {
 		return ctx[0].Model(source).Association(field).Append(associations)
 	}
-	return bocchiDB.Model(source).Association(field).Append(associations)
+	return billboardsDB.Model(source).Association(field).Append(associations)
 }
 
 type genericComparableConstraint interface {
@@ -205,7 +205,7 @@ func InArray(field string, value []interface{}) GenericQuery {
 }
 
 func Run(query ...GenericQuery) error {
-	tmp := bocchiDB
+	tmp := billboardsDB
 	for _, q := range query {
 		tmp = q(tmp)
 	}
@@ -216,13 +216,13 @@ func Run(query ...GenericQuery) error {
 
 func GetAny[T any](sql string, data ...interface{}) (T /* data */, error) {
 	var result T
-	err := bocchiDB.Raw(sql, data...).Scan(&result).Error
+	err := billboardsDB.Raw(sql, data...).Scan(&result).Error
 	return result, err
 }
 
 func GetOne[T any](query ...GenericQuery) (T /* data */, error) {
 	var data T
-	tmp := bocchiDB
+	tmp := billboardsDB
 	for _, q := range query {
 		tmp = q(tmp)
 	}
@@ -232,7 +232,7 @@ func GetOne[T any](query ...GenericQuery) (T /* data */, error) {
 
 func GetAll[T any](query ...GenericQuery) ([]T /* data */, error) {
 	var data []T
-	tmp := bocchiDB
+	tmp := billboardsDB
 	for _, q := range query {
 		tmp = q(tmp)
 	}
@@ -243,7 +243,7 @@ func GetAll[T any](query ...GenericQuery) ([]T /* data */, error) {
 func GetCount[T any](query ...GenericQuery) (int64 /* count */, error) {
 	var model T
 	var count int64
-	tmp := bocchiDB
+	tmp := billboardsDB
 	for _, q := range query {
 		tmp = q(tmp)
 	}
@@ -254,7 +254,7 @@ func GetCount[T any](query ...GenericQuery) (int64 /* count */, error) {
 func GetSum[T any, R genericComparableConstraint](fields string, query ...GenericQuery) (R, error) {
 	var model T
 	var sum R
-	tmp := bocchiDB
+	tmp := billboardsDB
 	for _, q := range query {
 		tmp = q(tmp)
 	}
@@ -264,7 +264,7 @@ func GetSum[T any, R genericComparableConstraint](fields string, query ...Generi
 
 func DelAssociation[T any](field string, query ...GenericQuery) error {
 	var model T
-	tmp := bocchiDB.Model(&model)
+	tmp := billboardsDB.Model(&model)
 	for _, q := range query {
 		tmp = q(tmp)
 	}
@@ -272,7 +272,7 @@ func DelAssociation[T any](field string, query ...GenericQuery) error {
 }
 
 func WithTransaction(fn func(tx *gorm.DB) error) error {
-	tx := bocchiDB.Begin()
+	tx := billboardsDB.Begin()
 	if tx.Error != nil {
 		return tx.Error
 	}
