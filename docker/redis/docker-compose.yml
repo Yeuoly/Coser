@@ -1,0 +1,8 @@
+version: '2.0'
+services:
+  db:
+    image: redis:latest
+    restart: always
+    ports:
+      - 6379:6379
+    command: redis-server --requirepass root
