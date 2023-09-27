@@ -14,13 +14,13 @@ const (
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		uid_string := c.GetHeader("Meduoduo-User-Id")
+		uid_string := c.GetHeader("Billboards-User-Id")
 		uid, err := strconv.Atoi(uid_string)
 		if err != nil {
 			return
 		}
 
-		authoration := c.GetHeader("Meduoduo-User-Token")
+		authoration := c.GetHeader("Billboards-User-Token")
 		if authoration == "" {
 			return
 		}
