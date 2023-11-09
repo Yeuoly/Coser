@@ -21,7 +21,7 @@ func initConfig() {
 
 func initDB() {
 	config := static.GetCoshubGlobalConfigurations()
-	err := db.InitBillboardsDB(config.DB.Host, config.DB.Port, config.DB.User, config.DB.Pass)
+	err := db.InitCoshubDB(config.DB.Host, config.DB.Port, config.DB.User, config.DB.Pass)
 	if err != nil {
 		log.Panic("failed to init database: %v", err)
 	}
