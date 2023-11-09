@@ -9,4 +9,6 @@ type Place struct {
 	Description string    `gorm:"not null;size:1024" json:"description"`
 	Avatar      string    `gorm:"not null;size:1024" json:"avatar"`
 	Galleries   []Gallery `gorm:"foreignKey:PlaceId;references:ID" json:"galleries"`
+	Key         string    `gorm:"not null;size:64" json:"key"` // key of the place, only the browser with the key can change the place
+	Ip          string    `gorm:"not null;size:64" json:"ip"`  // ip address of the uploader, for logging
 }

@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/Yeuoly/coshub/internal/controller/http_controller"
 	"github.com/Yeuoly/coshub/internal/middleware"
 	"github.com/Yeuoly/coshub/internal/types"
 	"github.com/gin-gonic/gin"
@@ -8,20 +9,20 @@ import (
 
 func Setup(eng *gin.Engine, config *types.CoshubGlobalConfigurations) {
 	eng.Use(middleware.Cors())
-	eng.Use(middleware.Auth())
 
-	// eng.POST(static.ROUTE_USER_LOGIN, http_controller.HandleUserLogin)
-	// eng.POST(static.ROUTE_USER_LOGIN_GITHUB, http_controller.HandleUserLoginWithGithub)
-	// eng.POST(static.ROUTE_USER_LOGIN_KASUMI_ACCEPT, http_controller.HandleUserRequestLoginKasumiAccept)
-	// eng.POST(static.ROUTE_USER_LOGIN_KASUMI_CHECK, http_controller.HandleUserRequestLoginKasumiCheck)
-	// eng.POST(static.ROUTE_USER_REG, http_controller.HandleUserRegister)
-	// eng.GET(static.ROUTE_USER_CHECK, http_controller.HandleUserCheck)
-	// eng.POST(static.ROUTE_USER_UPDATE, http_controller.HandleUserUpdate)
-	// eng.GET(static.ROUTE_USER_PROFILE, http_controller.HandleUserProfile)
-	// eng.GET(static.ROUTE_USER_ADMIN_SEARCH, http_controller.HandleAdminSearchUser)
-	// eng.GET(static.ROUTE_USER_ADMIN_LIST, http_controller.HandleAdminListUser)
+	eng.POST("/v1/place/create", http_controller.HandlePlaceCreate)
+	eng.POST("/v1/place/update", http_controller.HandlePlaceUpdate)
+	eng.GET("/v1/place/info", http_controller.HandlePlaceInfo)
+	eng.GET("/v1/place/list", http_controller.HandlePlaceList)
+	eng.GET("/v1/place/nearby", http_controller.HandlePlaceNearby)
 
-	// eng.GET(static.ROUTE_VERCODE_LOGIN, http_controller.HandleEmailLoginVercode)
-	// eng.GET(static.ROUTE_VERCODE_REG_PRE, http_controller.HandleEmailRegisterPreVercode)
-	// eng.POST(static.ROUTE_VERCODE_REG, http_controller.HandleEmailRegisterVercode)
+	eng.POST("/v1/tag/create", http_controller.HandleCreateTag)
+	eng.GET("/v1/tag/search", http_controller.HandleSearchTag)
+
+	eng.POST("/v1/gallery/create", http_controller.HandleCreateGallery)
+	eng.POST("/v1/gallery/update", http_controller.HandleUpdateGallery)
+	eng.GET("/v1/gallery/info", http_controller.HandleGalleryInfo)
+	eng.GET("/v1/gallery/search", http_controller.HandleGallerySearch)
+	eng.POST("/v1/gallery/upload", http_controller.HandleGalleryUploadImage)
+	eng.POST("/v1/gallery/delete", http_controller.HandleGalleryDeleteImage)
 }

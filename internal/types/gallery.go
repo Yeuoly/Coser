@@ -14,4 +14,6 @@ type Gallery struct {
 	Place         Place        `gorm:"foreignKey:PlaceId;references:ID" json:"place"`
 	Tags          []GalleryTag `gorm:"many2many:gallery_tags;" json:"tags"`
 	Images        []Image      `gorm:"foreignKey:GalleryId;references:ID" json:"images"`
+	Ip            string       `gorm:"not null;size:64" json:"ip"`  // ip address of the uploader, for logging
+	Key           string       `gorm:"not null;size:64" json:"key"` // key of the gallery, only the browser with the key can change the gallery
 }
