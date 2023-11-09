@@ -3,12 +3,12 @@ package middleware
 import (
 	"strings"
 
-	"github.com/Yeuoly/billboards/internal/static"
+	"github.com/Yeuoly/coshub/internal/static"
 	"github.com/gin-gonic/gin"
 )
 
 func Cors() gin.HandlerFunc {
-	config := static.GetBillboardsGlobalConfigurations()
+	config := static.GetCoshubGlobalConfigurations()
 	return func(c *gin.Context) {
 		// get origin
 		origin := c.Request.Header.Get("Origin")

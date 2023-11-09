@@ -3,14 +3,14 @@ package static
 import (
 	"os"
 
-	"github.com/Yeuoly/billboards/internal/types"
+	"github.com/Yeuoly/coshub/internal/types"
 	"gopkg.in/yaml.v3"
 )
 
-var billboardsGlobalConfigurations types.BillboardsGlobalConfigurations
+var coshubGlobalConfigurations types.CoshubGlobalConfigurations
 
 func InitConfig(path string) error {
-	billboardsGlobalConfigurations = types.BillboardsGlobalConfigurations{}
+	coshubGlobalConfigurations = types.CoshubGlobalConfigurations{}
 
 	// read config file
 	configFile, err := os.Open(path)
@@ -22,7 +22,7 @@ func InitConfig(path string) error {
 
 	// parse config file
 	decoder := yaml.NewDecoder(configFile)
-	err = decoder.Decode(&billboardsGlobalConfigurations)
+	err = decoder.Decode(&coshubGlobalConfigurations)
 	if err != nil {
 		return err
 	}
@@ -31,6 +31,6 @@ func InitConfig(path string) error {
 }
 
 // avoid global modification, use value copy instead
-func GetBillboardsGlobalConfigurations() types.BillboardsGlobalConfigurations {
-	return billboardsGlobalConfigurations
+func GetCoshubGlobalConfigurations() types.CoshubGlobalConfigurations {
+	return coshubGlobalConfigurations
 }

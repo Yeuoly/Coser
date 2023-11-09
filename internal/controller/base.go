@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/Yeuoly/billboards/internal/middleware"
-	"github.com/Yeuoly/billboards/internal/types"
+	"github.com/Yeuoly/coshub/internal/middleware"
+	"github.com/Yeuoly/coshub/internal/types"
 	"github.com/gin-gonic/gin"
 )
 

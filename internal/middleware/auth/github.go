@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Yeuoly/billboards/internal/db"
-	"github.com/Yeuoly/billboards/internal/db/model"
-	"github.com/Yeuoly/billboards/internal/middleware/user"
-	"github.com/Yeuoly/billboards/internal/static"
-	"github.com/Yeuoly/billboards/internal/types"
-	"github.com/Yeuoly/billboards/internal/utils/cocurrent"
-	"github.com/Yeuoly/billboards/internal/utils/thirdparty/github"
+	"github.com/Yeuoly/coshub/internal/db"
+	"github.com/Yeuoly/coshub/internal/db/model"
+	"github.com/Yeuoly/coshub/internal/middleware/user"
+	"github.com/Yeuoly/coshub/internal/static"
+	"github.com/Yeuoly/coshub/internal/types"
+	"github.com/Yeuoly/coshub/internal/utils/cocurrent"
+	"github.com/Yeuoly/coshub/internal/utils/thirdparty/github"
 )
 
 var (
@@ -27,7 +27,7 @@ var (
 
 func LoginWithGithub(code string) (*types.User, error) {
 	if github_client_id == "" {
-		config := static.GetBillboardsGlobalConfigurations()
+		config := static.GetCoshubGlobalConfigurations()
 		github_client_id = config.Github.ClientID
 		github_client_secret = config.Github.ClientSecret
 		github_redirect_uri = config.Github.RedirectURI

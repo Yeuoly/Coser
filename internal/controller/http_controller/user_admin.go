@@ -1,9 +1,9 @@
 package http_controller
 
 import (
-	"github.com/Yeuoly/billboards/internal/controller"
-	"github.com/Yeuoly/billboards/internal/service/http_service"
-	"github.com/Yeuoly/billboards/internal/types"
+	"github.com/Yeuoly/coshub/internal/controller"
+	"github.com/Yeuoly/coshub/internal/service/http_service"
+	"github.com/Yeuoly/coshub/internal/types"
 	"github.com/gin-gonic/gin"
 )
 

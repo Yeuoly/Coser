@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/Yeuoly/billboards/internal/static"
-	"github.com/Yeuoly/billboards/internal/utils/typ"
+	"github.com/Yeuoly/coshub/internal/static"
+	"github.com/Yeuoly/coshub/internal/utils/typ"
 	redis "github.com/go-redis/redis/v8"
 )
 
@@ -25,7 +25,7 @@ type CacheManager struct {
 }
 
 func InitBillboardsRedis() {
-	config := static.GetBillboardsGlobalConfigurations()
+	config := static.GetCoshubGlobalConfigurations()
 	redis_host = config.Redis.Host
 	redis_port = config.Redis.Port
 	redis_pass = config.Redis.Pass

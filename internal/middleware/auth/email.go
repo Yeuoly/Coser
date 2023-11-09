@@ -4,9 +4,9 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/Yeuoly/billboards/internal/static"
-	"github.com/Yeuoly/billboards/internal/utils/math"
-	email "github.com/Yeuoly/billboards/internal/utils/thirdparty/feishu"
+	"github.com/Yeuoly/coshub/internal/static"
+	"github.com/Yeuoly/coshub/internal/utils/math"
+	email "github.com/Yeuoly/coshub/internal/utils/thirdparty/feishu"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 // SendVercodeEmail sends verification code to user's email and return the encrypted vercode
 func SendVercodeEmail(to string, text string, method string) (string, error) {
 	if emailManager == nil {
-		config := static.GetBillboardsGlobalConfigurations()
+		config := static.GetCoshubGlobalConfigurations()
 		emailManager = email.NewBillboardsEmailManager(
 			config.Email.Host,
 			config.Email.Port,

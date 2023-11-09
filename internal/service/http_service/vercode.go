@@ -1,8 +1,8 @@
 package http_service
 
 import (
-	"github.com/Yeuoly/billboards/internal/middleware/auth"
-	"github.com/Yeuoly/billboards/internal/types"
+	"github.com/Yeuoly/coshub/internal/middleware/auth"
+	"github.com/Yeuoly/coshub/internal/types"
 )
 
 func EmailVercode(pre_vercode_token string, per_vercode_result string, pre_method string, email string, prompt string, method string) *types.BillboardsResponse {

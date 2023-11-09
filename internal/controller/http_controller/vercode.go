@@ -3,8 +3,8 @@ package http_controller
 import (
 	"fmt"
 
-	"github.com/Yeuoly/billboards/internal/controller"
-	"github.com/Yeuoly/billboards/internal/service/http_service"
+	"github.com/Yeuoly/coshub/internal/controller"
+	"github.com/Yeuoly/coshub/internal/service/http_service"
 	"github.com/gin-gonic/gin"
 )
 

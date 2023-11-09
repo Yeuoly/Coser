@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Yeuoly/billboards/internal/types"
+	"github.com/Yeuoly/coshub/internal/types"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

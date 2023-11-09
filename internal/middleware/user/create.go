@@ -3,9 +3,9 @@ package user
 import (
 	"errors"
 
-	"github.com/Yeuoly/billboards/internal/db"
-	"github.com/Yeuoly/billboards/internal/types"
-	"github.com/Yeuoly/billboards/internal/utils/math"
+	"github.com/Yeuoly/coshub/internal/db"
+	"github.com/Yeuoly/coshub/internal/types"
+	"github.com/Yeuoly/coshub/internal/utils/math"
 	"gorm.io/gorm"
 )
 

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Yeuoly/billboards/internal/db"
-	"github.com/Yeuoly/billboards/internal/utils/math"
+	"github.com/Yeuoly/coshub/internal/db"
+	"github.com/Yeuoly/coshub/internal/utils/math"
 )
 
 type lock struct {

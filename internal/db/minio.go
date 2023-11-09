@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Yeuoly/billboards/internal/static"
+	"github.com/Yeuoly/coshub/internal/static"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
@@ -22,7 +22,7 @@ var (
 func InitMinio() error {
 	var err error
 
-	config := static.GetBillboardsGlobalConfigurations()
+	config := static.GetCoshubGlobalConfigurations()
 	minioEndpoint = fmt.Sprintf("%s:%d", config.Minio.Host, config.Minio.Port)
 	minioAccessKey = config.Minio.AK
 	minioSecretKey = config.Minio.SK

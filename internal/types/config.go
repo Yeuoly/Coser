@@ -1,6 +1,6 @@
 package types
 
-type BillboardsGlobalConfigurations struct {
+type CoshubGlobalConfigurations struct {
 	App struct {
 		Port  int  `yaml:"port"`
 		Debug bool `yaml:"debug"`
@@ -44,4 +44,10 @@ type BillboardsGlobalConfigurations struct {
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
 	} `yaml:"proxy"`
+	Alioss struct {
+		Endpoint        string `yaml:"endpoint"`
+		Bucket          string `yaml:"bucket"`
+		AccessKeyId     string `yaml:"access_key_id"`
+		AccessKeySecret string `yaml:"access_key_secret"`
+	} `yaml:"alioss"`
 }

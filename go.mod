@@ -1,4 +1,4 @@
-module github.com/Yeuoly/billboards
+module github.com/Yeuoly/coshub
 
 go 1.20
 
@@ -13,7 +13,10 @@ require (
 	gorm.io/gorm v1.25.4
 )
 
+require golang.org/x/time v0.4.0 // indirect
+
 require (
+	github.com/aliyun/aliyun-oss-go-sdk v3.0.1+incompatible
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect

@@ -3,8 +3,8 @@ package model
 import (
 	"time"
 
-	"github.com/Yeuoly/billboards/internal/db"
-	"github.com/Yeuoly/billboards/internal/types"
+	"github.com/Yeuoly/coshub/internal/db"
+	"github.com/Yeuoly/coshub/internal/types"
 	"gorm.io/gorm"
 )
 

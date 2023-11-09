@@ -9,8 +9,8 @@ import (
 	"image/png"
 	"strconv"
 
-	"github.com/Yeuoly/billboards/internal/utils/math"
-	"github.com/Yeuoly/billboards/internal/utils/typ"
+	"github.com/Yeuoly/coshub/internal/utils/math"
+	"github.com/Yeuoly/coshub/internal/utils/typ"
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
 

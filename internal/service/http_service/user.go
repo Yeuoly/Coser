@@ -3,13 +3,13 @@ package http_service
 import (
 	"time"
 
-	"github.com/Yeuoly/billboards/internal/db"
-	"github.com/Yeuoly/billboards/internal/db/model"
-	"github.com/Yeuoly/billboards/internal/middleware/auth"
-	"github.com/Yeuoly/billboards/internal/middleware/user"
-	"github.com/Yeuoly/billboards/internal/static"
-	"github.com/Yeuoly/billboards/internal/types"
-	"github.com/Yeuoly/billboards/internal/utils/math"
+	"github.com/Yeuoly/coshub/internal/db"
+	"github.com/Yeuoly/coshub/internal/db/model"
+	"github.com/Yeuoly/coshub/internal/middleware/auth"
+	"github.com/Yeuoly/coshub/internal/middleware/user"
+	"github.com/Yeuoly/coshub/internal/static"
+	"github.com/Yeuoly/coshub/internal/types"
+	"github.com/Yeuoly/coshub/internal/utils/math"
 )
 
 func UserCheck(user *types.User) *types.BillboardsResponse {

@@ -1,8 +1,8 @@
 package http_service
 
 import (
-	"github.com/Yeuoly/billboards/internal/db"
-	"github.com/Yeuoly/billboards/internal/types"
+	"github.com/Yeuoly/coshub/internal/db"
+	"github.com/Yeuoly/coshub/internal/types"
 )
 
 func AdminSearchUser(user *types.User, username string) *types.BillboardsResponse {

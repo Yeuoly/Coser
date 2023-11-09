@@ -3,8 +3,8 @@ package middleware
 import (
 	"strconv"
 
-	"github.com/Yeuoly/billboards/internal/db/model"
-	"github.com/Yeuoly/billboards/internal/middleware/auth"
+	"github.com/Yeuoly/coshub/internal/db/model"
+	"github.com/Yeuoly/coshub/internal/middleware/auth"
 	"github.com/gin-gonic/gin"
 )
 

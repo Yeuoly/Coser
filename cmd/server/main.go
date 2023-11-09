@@ -1,6 +1,6 @@
 package main
 
-import "github.com/Yeuoly/billboards/internal"
+import "github.com/Yeuoly/coshub/internal"
 
 func main() {
 	// start server

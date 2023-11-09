@@ -3,7 +3,7 @@ package github
 import (
 	"fmt"
 
-	"github.com/Yeuoly/billboards/internal/utils/net"
+	"github.com/Yeuoly/coshub/internal/utils/net"
 )
 
 type GithubRequestAccessTokenResponse struct {

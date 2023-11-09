@@ -1,14 +1,14 @@
 package router
 
 import (
-	"github.com/Yeuoly/billboards/internal/controller/http_controller"
-	"github.com/Yeuoly/billboards/internal/middleware"
-	"github.com/Yeuoly/billboards/internal/static"
-	"github.com/Yeuoly/billboards/internal/types"
+	"github.com/Yeuoly/coshub/internal/controller/http_controller"
+	"github.com/Yeuoly/coshub/internal/middleware"
+	"github.com/Yeuoly/coshub/internal/static"
+	"github.com/Yeuoly/coshub/internal/types"
 	"github.com/gin-gonic/gin"
 )
 
-func Setup(eng *gin.Engine, config *types.BillboardsGlobalConfigurations) {
+func Setup(eng *gin.Engine, config *types.CoshubGlobalConfigurations) {
 	eng.Use(middleware.Cors())
 	eng.Use(middleware.Auth())
 

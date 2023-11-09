@@ -3,10 +3,10 @@ package internal
 import (
 	"fmt"
 
-	"github.com/Yeuoly/billboards/internal/db"
-	"github.com/Yeuoly/billboards/internal/router"
-	"github.com/Yeuoly/billboards/internal/static"
-	"github.com/Yeuoly/billboards/internal/utils/log"
+	"github.com/Yeuoly/coshub/internal/db"
+	"github.com/Yeuoly/coshub/internal/router"
+	"github.com/Yeuoly/coshub/internal/static"
+	"github.com/Yeuoly/coshub/internal/utils/log"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,7 +20,7 @@ func initConfig() {
 }
 
 func initDB() {
-	config := static.GetBillboardsGlobalConfigurations()
+	config := static.GetCoshubGlobalConfigurations()
 	err := db.InitBillboardsDB(config.DB.Host, config.DB.Port, config.DB.User, config.DB.Pass)
 	if err != nil {
 		log.Panic("failed to init database: %v", err)
@@ -40,7 +40,7 @@ func initDB() {
 }
 
 func initServer() {
-	config := static.GetBillboardsGlobalConfigurations()
+	config := static.GetCoshubGlobalConfigurations()
 	if !config.App.Debug {
 		gin.SetMode(gin.ReleaseMode)
 	}
