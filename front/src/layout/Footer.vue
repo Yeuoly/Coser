@@ -1,6 +1,6 @@
 <template>
     <NLayoutFooter bordered class="m-l-footer">
-        © 2023 Billboards Project. Made with ❤️ by Yeuoly.
+        © 2023 Coshub Project. Made with ❤️ by Yeuoly.
     </NLayoutFooter>
 </template>
 

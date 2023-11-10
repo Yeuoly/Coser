@@ -3,6 +3,7 @@ package oss
 import (
 	"io"
 	"math/rand"
+	"net/url"
 	"path"
 	"strconv"
 	"strings"
@@ -170,7 +171,15 @@ func RequestTempraryReadUrl(filename string, expires time.Duration) (string, err
 }
 
 // expires is the duration of the url, such as 30 * time.Minute
-func RequestTempraryWriteUrl(filename string, expires time.Duration) (string, error) {
+func RequestTempraryWriteUrl(filename string, expires time.Duration, content_type string, config ...OssConfig) (string, error) {
+	for _, v := range config {
+		switch v.typ {
+		case "auto_date_path":
+			fn := v.val.(func(string) string)
+			filename = fn(filename)
+		}
+	}
+
 	// trim httpsxxxx from filename
 	filename = strings.TrimPrefix(filename, internal_strings.StringJoin(
 		"https://",
@@ -180,11 +189,24 @@ func RequestTempraryWriteUrl(filename string, expires time.Duration) (string, er
 		"/",
 	))
 
-	signed_url, err := oss_bucket.SignURL(filename, oss.HTTPPut, int64(expires.Seconds()))
+	signed_url, err := oss_bucket.SignURL(filename, oss.HTTPPut, int64(expires.Seconds()), oss.ContentLength(6*1024*1024), oss.ContentType(content_type))
 
 	if err != nil {
 		return "", err
 	}
 
+	// url decode
+	signed_url, err = url.QueryUnescape(signed_url)
+	if err != nil {
+		return "", err
+	}
+
+	// keep + in url
+	signed_url = strings.Replace(signed_url, "+", "%2B", -1)
+
 	return signed_url, nil
+}
+
+func SetObjectACLPublicRead(filename string) error {
+	return oss_bucket.SetObjectACL(filename, oss.ACLPublicRead)
 }

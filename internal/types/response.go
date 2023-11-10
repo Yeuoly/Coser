@@ -1,6 +1,6 @@
 package types
 
-type BillboardsResponse struct {
+type CoshubResponse struct {
 	// Code is the code of the response
 	Code int `json:"code"`
 	// Message is the message of the response
@@ -9,19 +9,19 @@ type BillboardsResponse struct {
 	Data interface{} `json:"data"`
 }
 
-func SuccessResponse(data interface{}) *BillboardsResponse {
-	return &BillboardsResponse{
+func SuccessResponse(data interface{}) *CoshubResponse {
+	return &CoshubResponse{
 		Code:    0,
 		Message: "success",
 		Data:    data,
 	}
 }
 
-func ErrorResponse(code int, message string) *BillboardsResponse {
+func ErrorResponse(code int, message string) *CoshubResponse {
 	if code >= 0 {
 		code = -1
 	}
-	return &BillboardsResponse{
+	return &CoshubResponse{
 		Code:    code,
 		Message: message,
 	}

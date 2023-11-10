@@ -5,7 +5,7 @@ import (
 	"github.com/Yeuoly/coshub/internal/types"
 )
 
-func AdminSearchUser(user *types.User, username string) *types.BillboardsResponse {
+func AdminSearchUser(user *types.User, username string) *types.CoshubResponse {
 	type response struct {
 		Users []types.User `json:"users"`
 	}
@@ -26,7 +26,7 @@ func AdminSearchUser(user *types.User, username string) *types.BillboardsRespons
 	})
 }
 
-func AdminListUser(user *types.User, page int) *types.BillboardsResponse {
+func AdminListUser(user *types.User, page int) *types.CoshubResponse {
 	type response struct {
 		Users []types.User `json:"users"`
 		Total uint         `json:"total"`

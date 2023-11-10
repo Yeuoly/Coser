@@ -7,6 +7,7 @@ import (
 	"github.com/Yeuoly/coshub/internal/router"
 	"github.com/Yeuoly/coshub/internal/static"
 	"github.com/Yeuoly/coshub/internal/utils/log"
+	"github.com/Yeuoly/coshub/internal/utils/oss"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,9 +30,6 @@ func initDB() {
 	db.RegisterModel()
 	log.Info("database register model success")
 
-	db.InitBillboardsRedis()
-	log.Info("redis init success")
-
 	err = db.InitModel()
 	if err != nil {
 		log.Panic("failed to init model: %v", err)
@@ -52,7 +50,7 @@ func initServer() {
 }
 
 func initMiddleware() {
-	db.InitMinio()
+	oss.InitOSS()
 }
 
 func Server() {

@@ -42,7 +42,7 @@ func HandleUpdateGallery(c *gin.Context) {
 
 func HandleGalleryInfo(c *gin.Context) {
 	type request struct {
-		ID uint `json:"id" binding:"required"`
+		ID uint `json:"id" binding:"required" form:"id"`
 	}
 
 	controller.BindRequest(c, func(r request) {
@@ -52,7 +52,7 @@ func HandleGalleryInfo(c *gin.Context) {
 // search by keyword and tags
 func HandleGallerySearch(c *gin.Context) {
 	type request struct {
-		Keyword string `json:"keyword"`
+		Keyword string `json:"keyword" form:"keyword"`
 	}
 
 	controller.BindRequest(c, func(r request) {
@@ -62,7 +62,7 @@ func HandleGallerySearch(c *gin.Context) {
 // list by place
 func HandleGalleryList(c *gin.Context) {
 	type request struct {
-		PlaceID uint `json:"place_id"`
+		PlaceID uint `json:"place_id" form:"place_id"`
 	}
 
 	controller.BindRequest(c, func(r request) {

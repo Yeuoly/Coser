@@ -5,17 +5,11 @@ import {
     NSpace,
     NMessageProvider,
     NDialogProvider,
-NLoadingBarProvider,
+    NLoadingBarProvider,
 } from 'naive-ui'
 import Header from './layout/Header.vue'
 import Footer from './layout/Footer.vue'
 import Body from './layout/Body.vue'
-import { refreshLoginStatus } from './middleware/auth/login'
-import { onMounted } from 'vue'
-
-onMounted(() => {
-    setTimeout(() => refreshLoginStatus())
-})
 
 </script>
 

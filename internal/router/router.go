@@ -10,6 +10,9 @@ import (
 func Setup(eng *gin.Engine, config *types.CoshubGlobalConfigurations) {
 	eng.Use(middleware.Cors())
 
+	eng.POST("/v1/file/upload", http_controller.HandleFileUpload)
+	eng.POST("/v1/file/upload/finish", http_controller.HandleFileUploadFinish)
+
 	eng.POST("/v1/place/create", http_controller.HandlePlaceCreate)
 	eng.POST("/v1/place/update", http_controller.HandlePlaceUpdate)
 	eng.GET("/v1/place/info", http_controller.HandlePlaceInfo)

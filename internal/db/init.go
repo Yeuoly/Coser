@@ -16,6 +16,12 @@ func InitCoshubDB(host string, port int, user string, pass string) error {
 		return err
 	}
 
+	// install postgim
+	err = db.Exec("CREATE EXTENSION IF NOT EXISTS postgis;").Error
+	if err != nil {
+		return err
+	}
+
 	pgsqlDB, err := db.DB()
 	if err != nil {
 		return err
@@ -31,6 +37,7 @@ func RegisterModel() {
 	// billboardsDB.AutoMigrate(&types.UserProfile{})
 	// billboardsDB.AutoMigrate(&types.Password{})
 	// billboardsDB.AutoMigrate(&types.UserGithubBind{})
+	coshubDB.AutoMigrate(&types.File{})
 	coshubDB.AutoMigrate(&types.Place{})
 	coshubDB.AutoMigrate(&types.Gallery{})
 	coshubDB.AutoMigrate(&types.Image{})

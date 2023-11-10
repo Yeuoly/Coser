@@ -17,3 +17,10 @@ type Gallery struct {
 	Ip            string       `gorm:"not null;size:64" json:"ip"`  // ip address of the uploader, for logging
 	Key           string       `gorm:"not null;size:64" json:"key"` // key of the gallery, only the browser with the key can change the gallery
 }
+
+func (g *Gallery) ClearSensitive() {
+	g.Key = ""
+	g.Ip = ""
+	g.Place.Ip = ""
+	g.Place.Key = ""
+}

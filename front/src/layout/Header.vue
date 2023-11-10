@@ -4,37 +4,12 @@
             <template #title>
                 <NMenu mode="horizontal" :options="mainMenu"></NMenu>
             </template>
-            <template #extra>
-                <div>
-                    <div class="left px3 py1 clickable">
-                        <NDropdown
-                            :options="languages"
-                            @select="handleSelectLanguage"
-                        >
-                            <NIcon :size="22">
-                                <LanguageOutline></LanguageOutline>
-                            </NIcon>
-                        </NDropdown>
-                    </div>
-                    <div class="left pl3 pr5 py1">
-                        {{ UserName }}
-                    </div>
-                    <div class="left mr5 clickable">
-                        <NDropdown
-                            :options="userMenu"
-                            @select="handleMenuSelect"
-                        >
-                            <NAvatar round :src="UserAvatar"></NAvatar>
-                        </NDropdown>
-                    </div>
-                </div>
-            </template>
         </NPageHeader>
     </NLayoutHeader>
 </template>
 
 <script setup lang="ts">
-import { NLayoutHeader, NMenu, MenuOption, NPageHeader, NIcon, NAvatar, NText, NDropdown, FormInst } from 'naive-ui'
+import { NLayoutHeader, NMenu, MenuOption, NPageHeader, NIcon, NAvatar, NText, NDropdown, FormInst, NH2 } from 'naive-ui'
 import { computed, h, onMounted, watch, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAssetsFile } from '../utils/index'
@@ -47,13 +22,13 @@ const router = useRouter()
 import { useUserStore } from '../store/user'
 import { storeToRefs } from 'pinia'
 
-const { UserId, UserName, UserAvatar, UserOnline, IsAdmin } = storeToRefs(useUserStore())
+const { UserOnline } = storeToRefs(useUserStore())
 
 const mainMenu = computed((): MenuOption[] => {
     const menu: MenuOption[] = [
         {
             label: () => h('img', {
-                src: getAssetsFile('logo.jpeg'),
+                src: getAssetsFile('favicon.svg'),
                 alt: 'logo',
                 style: 'height: 80px;'
             }),
@@ -62,6 +37,11 @@ const mainMenu = computed((): MenuOption[] => {
                 router.push('/')
             }
         },
+        {
+            label: () => h(NH2, { style: {
+                marginTop: '20px',
+            } }, { default: () => 'Coshub' })
+        }
     ]
     return menu
 })

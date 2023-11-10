@@ -15,8 +15,6 @@ import { Transition } from 'vue'
 
 <style scoped>
 .m-l-body {
-    padding-top: 15px;
-    padding-bottom: 15px;
     min-height: 85vh;
 }
 

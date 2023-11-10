@@ -16,7 +16,7 @@ func HandleCreateTag(c *gin.Context) {
 
 func HandleSearchTag(c *gin.Context) {
 	type request struct {
-		Keyword string `json:"keyword"`
+		Keyword string `json:"keyword" form:"keyword" binding:"required,max=64"`
 	}
 
 	controller.BindRequest(c, func(r request) {

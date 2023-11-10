@@ -2,6 +2,7 @@ package http_controller
 
 import (
 	"github.com/Yeuoly/coshub/internal/controller"
+	"github.com/Yeuoly/coshub/internal/service/http_service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,11 +17,13 @@ func HandlePlaceCreate(c *gin.Context) {
 	}
 
 	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.CreatePlace(r.Name, r.Description, r.Lat, r.Lng, r.Avatar, r.Key))
 	})
 }
 
 func HandlePlaceUpdate(c *gin.Context) {
 	type request struct {
+		ID          uint    `json:"id" binding:"required"`
 		Name        string  `json:"name" binding:"required,max=64"`
 		Description string  `json:"description" binding:"max=1024"`
 		Lat         float64 `json:"lat" binding:"required"`
@@ -35,7 +38,7 @@ func HandlePlaceUpdate(c *gin.Context) {
 
 func HandlePlaceInfo(c *gin.Context) {
 	type request struct {
-		ID uint `json:"id" binding:"required"`
+		ID uint `json:"id" binding:"required" form:"id"`
 	}
 
 	controller.BindRequest(c, func(r request) {
@@ -44,7 +47,7 @@ func HandlePlaceInfo(c *gin.Context) {
 
 func HandlePlaceList(c *gin.Context) {
 	type request struct {
-		Keyword string `json:"keyword"`
+		Keyword string `json:"keyword" form:"keyword"`
 	}
 
 	controller.BindRequest(c, func(r request) {
@@ -53,11 +56,11 @@ func HandlePlaceList(c *gin.Context) {
 
 func HandlePlaceNearby(c *gin.Context) {
 	type request struct {
-		Lat      float64 `json:"lat" binding:"required"`
-		Lng      float64 `json:"lng" binding:"required"`
-		Distance float64 `json:"distance" binding:"required"` // in meters
+		Lat float64 `json:"lat" binding:"required" form:"lat"`
+		Lng float64 `json:"lng" binding:"required" form:"lng"`
 	}
 
 	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.GetNearbyPlaces(r.Lat, r.Lng))
 	})
 }

@@ -10,6 +10,5 @@ import { i18n } from './locale/index'
 import axios from 'axios'
 
 axios.defaults.baseURL = (import.meta as any).env.VITE_APP_BACKEND_BASE_URL;
-axios.defaults.withCredentials = true
 
 createApp(App).use(router).use(i18n).use(createPinia()).mount('#app')

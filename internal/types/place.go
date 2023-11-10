@@ -12,3 +12,8 @@ type Place struct {
 	Key         string    `gorm:"not null;size:64" json:"key"` // key of the place, only the browser with the key can change the place
 	Ip          string    `gorm:"not null;size:64" json:"ip"`  // ip address of the uploader, for logging
 }
+
+func (p *Place) ClearSensitive() {
+	p.Key = ""
+	p.Ip = ""
+}
