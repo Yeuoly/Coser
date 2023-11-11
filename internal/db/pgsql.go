@@ -38,6 +38,12 @@ func Delete(data any, ctx ...*gorm.DB) error {
 	return coshubDB.Delete(data).Error
 }
 
+func Debug() GenericQuery {
+	return func(tx *gorm.DB) *gorm.DB {
+		return tx.Debug()
+	}
+}
+
 func ReplaceAssociation[T any, R any](source *T, field string, associations []R, ctx ...*gorm.DB) error {
 	if len(ctx) > 0 {
 		return ctx[0].Model(source).Association(field).Replace(associations)

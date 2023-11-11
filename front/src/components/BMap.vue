@@ -35,7 +35,14 @@
             <template v-else>
                 <BMarker v-for="(point, index) in multiPoints" :key="index"
                     :position="{ lat: point.lat, lng: point.lng }"
-                    :icon="point.blue ? 'simple_blue' : 'simple_red'"
+                    :visible="true"
+                    :icon="point.ico ? {
+                        imageUrl: point.ico,
+                        imageSize: {
+                            width: 100,
+                            height: 100,
+                        },
+                    } : 'simple_red'"
                     @click="point.click && point.click()"
                 />
             </template>
@@ -55,7 +62,7 @@
             }"
             style="width: calc(100% - 40px);"
         >
-            <NInput :bordered="false" v-model:value="searchForm.keyword" @click="showSearch = true">
+            <NInput  placeholder="搜索地名" :bordered="false" v-model:value="searchForm.keyword" @click="showSearch = true">
                 <template #prefix>
                     <NIcon :component="Search"></NIcon>
                 </template>
@@ -282,10 +289,10 @@ const settingProps = defineProps({
 type MapCoordinatePoint = {
     lng: number
     lat: number,
-    render?: (detail: any) => VNodeChild,
     title?: string,
     detail?: any,
-    blue?: boolean,
+    ico?: string,
+    renderIco?: string,
     click?: () => void,
 }
 

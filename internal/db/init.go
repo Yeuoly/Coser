@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Yeuoly/coshub/internal/types"
+	"github.com/Yeuoly/coshub/internal/utils/log"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -37,11 +38,26 @@ func RegisterModel() {
 	// billboardsDB.AutoMigrate(&types.UserProfile{})
 	// billboardsDB.AutoMigrate(&types.Password{})
 	// billboardsDB.AutoMigrate(&types.UserGithubBind{})
-	coshubDB.AutoMigrate(&types.File{})
-	coshubDB.AutoMigrate(&types.Place{})
-	coshubDB.AutoMigrate(&types.Gallery{})
-	coshubDB.AutoMigrate(&types.Image{})
-	coshubDB.AutoMigrate(&types.GalleryTag{})
+	err := coshubDB.AutoMigrate(&types.File{})
+	if err != nil {
+		log.Error("Failed to migrate file model: %s", err.Error())
+	}
+	err = coshubDB.AutoMigrate(&types.Place{})
+	if err != nil {
+		log.Error("Failed to migrate place model: %s", err.Error())
+	}
+	err = coshubDB.AutoMigrate(&types.Gallery{})
+	if err != nil {
+		log.Error("Failed to migrate gallery model: %s", err.Error())
+	}
+	err = coshubDB.AutoMigrate(&types.Image{})
+	if err != nil {
+		log.Error("Failed to migrate image model: %s", err.Error())
+	}
+	err = coshubDB.AutoMigrate(&types.Tag{})
+	if err != nil {
+		log.Error("Failed to migrate tag model: %s", err.Error())
+	}
 }
 
 func InitModel() error {

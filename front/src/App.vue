@@ -6,10 +6,12 @@ import {
     NMessageProvider,
     NDialogProvider,
     NLoadingBarProvider,
+useMessage,
 } from 'naive-ui'
 import Header from './layout/Header.vue'
 import Footer from './layout/Footer.vue'
 import Body from './layout/Body.vue'
+import { onMounted } from 'vue'
 
 </script>
 

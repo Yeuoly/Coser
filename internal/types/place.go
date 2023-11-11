@@ -16,4 +16,7 @@ type Place struct {
 func (p *Place) ClearSensitive() {
 	p.Key = ""
 	p.Ip = ""
+	for i := range p.Galleries {
+		p.Galleries[i].ClearSensitive()
+	}
 }

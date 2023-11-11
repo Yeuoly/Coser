@@ -17,12 +17,18 @@ dependencies:
   axios:
     specifier: ^1.4.0
     version: registry.npmmirror.com/axios@1.4.0
+  exif-js:
+    specifier: ^2.3.0
+    version: registry.npmmirror.com/exif-js@2.3.0
   md5:
     specifier: ^2.3.0
     version: registry.npmmirror.com/md5@2.3.0
   naive-ui:
     specifier: ^2.34.4
     version: registry.npmmirror.com/naive-ui@2.34.4(vue@3.3.4)
+  piexifjs:
+    specifier: ^1.0.6
+    version: registry.npmmirror.com/piexifjs@1.0.6
   pinia:
     specifier: ^2.1.6
     version: registry.npmmirror.com/pinia@2.1.6(typescript@5.0.2)(vue@3.3.4)
@@ -816,6 +822,12 @@ packages:
     version: 0.2.4
     dev: false
 
+  registry.npmmirror.com/exif-js@2.3.0:
+    resolution: {integrity: sha512-1Og9pAzG2FZRVlaavH8bB8BTeHcjMdJhKmeQITkX+uLRCD0xPtKAdZ2clZmQdJ56p9adXtJ8+jwrGp/4505lYg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/exif-js/-/exif-js-2.3.0.tgz}
+    name: exif-js
+    version: 2.3.0
+    dev: false
+
   registry.npmmirror.com/follow-redirects@1.15.2:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.2.tgz}
     name: follow-redirects
@@ -985,6 +997,12 @@ packages:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/picocolors/-/picocolors-1.0.0.tgz}
     name: picocolors
     version: 1.0.0
+
+  registry.npmmirror.com/piexifjs@1.0.6:
+    resolution: {integrity: sha512-0wVyH0cKohzBQ5Gi2V1BuxYpxWfxF3cSqfFXfPIpl5tl9XLS5z4ogqhUCD20AbHi0h9aJkqXNJnkVev6gwh2ag==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/piexifjs/-/piexifjs-1.0.6.tgz}
+    name: piexifjs
+    version: 1.0.6
+    dev: false
 
   registry.npmmirror.com/pinia@2.1.6(typescript@5.0.2)(vue@3.3.4):
     resolution: {integrity: sha512-bIU6QuE5qZviMmct5XwCesXelb5VavdOWKWaB17ggk++NUwQWWbP5YnsONTk3b752QkW9sACiR81rorpeOMSvQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/pinia/-/pinia-2.1.6.tgz}

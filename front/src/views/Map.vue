@@ -2,8 +2,8 @@
 <template>
     <div class="c-v-map">
         <div class="map-container">
-            <BMap @onClick="handleMapClick" @onLocate="handleMapLocate" :points="points" :enable-modify="false" :enable-add-center-marker="false"
-                enable-search mode="multi"></BMap>
+            <BMap @onClick="handleMapClick" @onLocate="handleMapLocate" :points="points" :enable-modify="false"
+                :enable-add-center-marker="false" enable-search mode="multi"></BMap>
         </div>
     </div>
     <NDrawer v-model:show="showPlace" :width="500">
@@ -52,7 +52,7 @@
                         封面预览
                     </div>
                     <div class="w100" style="height: 300px;">
-                        <NImage :src="newPlaceForm.avatar" fit="cover" style="width: 100%; height: 100%;"></NImage>
+                        <NImage style="border-radius: 12px;" :src="newPlaceForm.avatar" object-fit="cover" height="300" width="450"></NImage>
                     </div>
                 </NH6>
                 <NH6 prefix="bar" class="w100">
@@ -80,13 +80,51 @@
                         正片列表
                     </template>
                     <template #header-extra>
-                        <NButton type="primary">
+                        <NButton type="primary" @click="createGallery">
                             <template #icon>
                                 <NIcon size="20" :component="Image"></NIcon>
                             </template>
                             <span>创建正片</span>
                         </NButton>
                     </template>
+                    <NThing v-for="gallery in currentPlace.galleries" :key="gallery.ID">
+                        <template #header>
+                            {{ gallery.name }}
+                        </template>
+                        <template #header-extra>
+                            <NButtonGroup>
+                                <NButton size="small" type="info">
+                                    让我康康！
+                                </NButton>
+                                <NTooltip trigger="hover">
+                                    <template #trigger>
+                                        <NButton size="small" type="primary" @click="updateGallery(gallery)">
+                                            <template #icon>
+                                                <NIcon :component="CreateOutline"></NIcon>
+                                            </template>
+                                            编辑
+                                        </NButton>
+                                    </template>
+                                    只有您创建的才可以编辑哦
+                                </NTooltip>
+                                <NTooltip trigger="hover">
+                                    <template #trigger>
+                                        <NButton size="small" type="error" @click="deleteGallery(gallery)">
+                                            <template #icon>
+                                                <NIcon :component="Trash"></NIcon>
+                                            </template>
+                                            删除
+                                        </NButton>
+                                    </template>
+                                    只有您创建的才可以删除哦
+                                </NTooltip>
+                            </NButtonGroup>
+                        </template>
+                        <NImage style="border-radius: 12px;" width="450" object-fit="cover" height="300"
+                            :src="(gallery.images && gallery.images.length > 0) ? gallery.images[0].url + '?x-oss-process=image/resize,m_fill,h_400,w_800' : ''">
+                        </NImage>
+                        <NDivider></NDivider>
+                    </NThing>
                 </NThing>
             </div>
         </NDrawerContent>
@@ -94,20 +132,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, h, ref } from 'vue'
 import BMap from '../components/BMap.vue'
-import { Place } from '../interface/types'
+import { Gallery, Place } from '../interface/types'
 import {
-    NButton, NDivider, NDrawer, NDrawerContent, NH3, NH6,
+    NButton, NButtonGroup, NDivider, NDrawer, NDrawerContent, NH3, NH6,
     NIcon, NImage, NInput, NP, NResult, NText,
     NThing,
+    NTooltip,
     NUpload, NUploadDragger, UploadCustomRequestOptions,
     useDialog, useMessage
 } from 'naive-ui'
 import { apiUploadFile } from '../interface/file'
-import { Image } from '@vicons/ionicons5'
-import { apiCreatePlace, apiPlaceNearby } from '../interface/cos'
+import { CreateOutline, Image, Trash } from '@vicons/ionicons5'
+import { apiCreatePlace, apiPlaceInfo, apiPlaceNearby, apiGalleryDelete } from '../interface/cos'
 import { getBrowserKey } from '../store/key'
+import GalleryEditor from './GalleryEditor.vue'
 
 const dialog = useDialog()
 const message = useMessage()
@@ -133,9 +173,19 @@ const uploadAvatar = async ({
         return
     }
 
-    onProgress({ percent: 0 })
+    let index = 0
+    let timer = setInterval(() => {
+        onProgress({
+            percent: index
+        })
+        index++
+        if (index == 99) {
+            clearInterval(timer)
+            return
+        }
+    }, 100)
     const response = await apiUploadFile(file.name, file.file as File)
-    onProgress({ percent: 100 })
+    clearInterval(timer)
     if (!response.isSuccess()) {
         onError()
         message.error(response.getError())
@@ -171,6 +221,7 @@ const createPlace = async () => {
     }
 }
 
+
 const fetchNearbyPlaces = async (lat: number, lng: number) => {
     const response = await apiPlaceNearby(lat, lng)
     if (!response.isSuccess()) {
@@ -189,16 +240,26 @@ const fetchNearbyPlaces = async (lat: number, lng: number) => {
 const places = ref<Place[]>([])
 
 const isClickPlace = ref<boolean>(false)
-const points = computed(() => places.value.map(v => {
+const points = computed(() => places.value.map((v, k) => {
     return {
         lng: v.point.x,
         lat: v.point.y,
-        blue: false,
         click: () => {
             isClickPlace.value = true
-            setTimeout(() => {
+            showPlace.value = true
+            setTimeout(async () => {
                 currentPlace.value = v
-                showPlace.value = true
+                // check if place is already fetched
+                if (!v.galleries) {
+                    const response = await apiPlaceInfo(v.ID)
+                    if (!response.isSuccess()) {
+                        message.error(response.getError())
+                    } else {
+                        places.value[k] = response.data?.place || v
+                        currentPlace.value = places.value[k]
+                    }
+                }
+                isClickPlace.value = false
             }, 100)
         },
     }
@@ -221,6 +282,63 @@ const handleMapLocate = (e: {
     lng: number, lat: number
 }) => {
     fetchNearbyPlaces(e.lat, e.lng)
+}
+
+const createGallery = () => {
+    const dialogController = dialog.create({
+        style: {
+            width: '1000px'
+        },
+        title: '编辑',
+        closable: true,
+        content: () => h(GalleryEditor, {
+            galleryId: 0,
+            placeId: currentPlace.value?.ID || 0,
+            onCreated: (gallery: Gallery) => {
+                currentPlace.value?.galleries?.push(gallery)
+            },
+            onUpdated: (gallery: Gallery) => {
+                const index = currentPlace.value?.galleries?.findIndex(v => v.ID === gallery.ID)
+                if (index !== undefined && index !== -1) {
+                    currentPlace.value?.galleries?.splice(index, 1, gallery)
+                }
+            },
+        }),
+    })
+}
+
+const updateGallery = async (gallery: Gallery) => {
+    const dialogController = dialog.create({
+        style: {
+            width: '1000px'
+        },
+        title: '编辑',
+        closable: true,
+        content: () => h(GalleryEditor, {
+            galleryId: gallery.ID,
+            placeId: currentPlace.value?.ID || 0,
+            gallery: gallery,
+            onUpdated: (gallery: Gallery) => {
+                const index = currentPlace.value?.galleries?.findIndex(v => v.ID === gallery.ID)
+                if (index !== undefined && index !== -1) {
+                    currentPlace.value?.galleries?.splice(index, 1, gallery)
+                }
+            },
+        }),
+    })
+}
+
+const deleteGallery = async (gallery: Gallery) => {
+    const response = await apiGalleryDelete(gallery.ID, getBrowserKey())
+    if (!response.isSuccess()) {
+        message.error(response.getError())
+    } else {
+        message.success('删除成功')
+        const index = currentPlace.value?.galleries?.findIndex(v => v.ID === gallery.ID)
+        if (index !== undefined && index !== -1) {
+            currentPlace.value?.galleries?.splice(index, 1)
+        }
+    }
 }
 
 </script>

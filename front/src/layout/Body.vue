@@ -9,8 +9,20 @@
 </template>
 
 <script setup lang="ts">
-import { NLayoutContent } from 'naive-ui'
-import { Transition } from 'vue'
+import { NLayoutContent, useDialog, useMessage } from 'naive-ui'
+import { Transition, onMounted } from 'vue'
+
+
+const message = useMessage()
+const dialog = useDialog()
+
+onMounted(() => {
+    // @ts-ignore
+    window.$message = message
+    // @ts-ignore
+    window.$dialog = dialog
+})
+
 </script>
 
 <style scoped>

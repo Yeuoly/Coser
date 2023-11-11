@@ -1,4 +1,4 @@
-import { RequestMethods, apiBase } from "./base"
+import { RequestMethods, Response, apiBase } from "./base"
 import { Place } from "./types"
 
 export const apiCreatePlace = (name: string, description: string, lat: number, lng: number, key: string, avatar: string) => apiBase<{
@@ -14,7 +14,7 @@ export const apiUpdatePlace = (id: number, name: string, description: string, la
 })
 
 export const apiPlaceInfo = (id: number) => apiBase<{
-
+    place: Place
 }>('/v1/place/info', RequestMethods.GET, {
     id
 })
@@ -45,9 +45,9 @@ export const apiSearchTag = (keyword: string) => apiBase<{
 
 export const apiCreateGallery = (
     place_id: number, name: string, coser: string, description: string, photographers: string, character: string,
-    series: string, tags: string[], key: string
+    series: string, tags: number[], key: string
 ) => apiBase<{
-        
+    id: number
 }>('/v1/gallery/create', RequestMethods.POST, {
     place_id, name, coser, description, photographers, character, series, tags, key
 })
@@ -73,14 +73,70 @@ export const apiGallerySearch = (keyword: string) => apiBase<{
     keyword
 })
 
-export const apiGalleryUploadImage = (gallery_id: number, key: string) => apiBase<{
-        
-}>('/v1/gallery/upload', RequestMethods.POST, {
-    gallery_id, key
-})
+export const apiGalleryUploadImage = (
+    gallery_id: number, filename: string, key: string, content_type: string, camera: string, lens: string, focal_length: string,
+    file: File
+) => {
+    return new Promise<Response<{
+        url: string,
+        id: number
+    }>>(async (resolve) => {
+        const response = await apiBase<{
+            url: string,
+            id: number
+        }>('/v1/gallery/upload', RequestMethods.POST, {
+            gallery_id, filename, key, content_type, camera, lens, focal_length
+        })
 
-export const apiGalleryDeleteImage = (gallery_id: number, key: string) => apiBase<{
-        
+        if (!response.isSuccess()) {
+            resolve(response)
+            return
+        }
+    
+        const url = response.data?.url as string
+
+        var xhr = new XMLHttpRequest()
+        xhr.open("PUT", url, true)
+        xhr.setRequestHeader("Content-Type", file.type)
+        xhr.onload = async function () {
+            if (xhr.status === 200) {
+                const readurl = url.split('?')[0]
+                const result = new Response<{url: string, id: number}>()
+                result.code = 0
+                result.success = true
+                result.data = {
+                    url: readurl,
+                    id: response.data?.id as number
+                }
+    
+                const finishResponse = await apiBase<{
+                    success: boolean
+                }>('/v1/file/upload/finish', RequestMethods.POST, {
+                    url: readurl
+                })
+            
+                if (!finishResponse.isSuccess()) {
+                    response.message = finishResponse.message
+                    response.code = finishResponse.code
+                    response.success = finishResponse.success
+                    resolve(response)
+                    return
+                }
+    
+                resolve(result)
+            } else {
+                const response = new Response<{url: string, id: number}>()
+                response.code = xhr.status
+                response.message = xhr.statusText
+                resolve(response)
+            }
+        }
+        xhr.send(file)
+    })
+}
+
+export const apiGalleryDelete = (id: number, key: string) => apiBase<{
+    success: boolean
 }>('/v1/gallery/delete', RequestMethods.POST, {
-    gallery_id, key
+    id, key
 })

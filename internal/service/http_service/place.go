@@ -75,3 +75,26 @@ func GetNearbyPlaces(lat float64, lng float64) *types.CoshubResponse {
 		Places: places,
 	})
 }
+
+func GetPlaceInfo(id uint) *types.CoshubResponse {
+	type response struct {
+		Place types.Place `json:"place"`
+	}
+
+	place, err := db.GetOne[types.Place](
+		db.Equal("id", id),
+		db.Preload("Galleries"),
+		db.Preload("Galleries.Images"),
+		db.Preload("Galleries.Tags"),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	place.ClearSensitive()
+
+	return types.SuccessResponse(response{
+		Place: place,
+	})
+}

@@ -42,6 +42,7 @@ func HandlePlaceInfo(c *gin.Context) {
 	}
 
 	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.GetPlaceInfo(r.ID))
 	})
 }
 

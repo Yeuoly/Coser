@@ -1,0 +1,366 @@
+<template>
+    <div class="c-v-gallary-editor px2 py2" ref="galleryRef">
+        <div v-if="!gallery.ID">
+            <NH3 prefix="bar">
+                <NText type="primary">创建</NText>
+            </NH3>
+            <NResult status="warning">
+                请注意，当您创建完正片后，有且只有您当前使用的浏览器可以修改、删除该地点，其他人只拥有查看权限。
+            </NResult>
+            <NH6 prefix="bar" class="w100">
+                <div class="text-13 w100">
+                    起个名~
+                </div>
+                <NInput v-model:value="gallery.name" maxlength="64" show-count />
+            </NH6>
+            <NH6 prefix="bar" class="w100">
+                <div class="text-13 w100">
+                    Coser的CN（可以留空）
+                </div>
+                <NInput v-model:value="gallery.cosers" maxlength="64" show-count />
+            </NH6>
+            <NH6 prefix="bar" class="w100">
+                <div class="text-13 w100">
+                    摄影师的CN（可以留空）
+                </div>
+                <NInput v-model:value="gallery.photographers" maxlength="64" show-count />
+            </NH6>
+            <NH6 prefix="bar" class="w100">
+                <div class="text-13 w100">
+                    角色（可以留空）
+                </div>
+                <NInput v-model:value="gallery.character" maxlength="64" show-count />
+            </NH6>
+            <NH6 prefix="bar" class="w100">
+                <div class="text-13 w100">
+                    简单的介绍（可以留空）
+                </div>
+                <NInput v-model:value="gallery.description" maxlength="1024" type="textarea" show-count />
+            </NH6>
+            <NH3 prefix="bar" class="w100">
+                <NButton block type="primary" @click="createGallery">创建</NButton>
+            </NH3>
+        </div>
+        <div v-else>
+            <NGrid cols="2" x-gap="12">
+                <NGi>
+                    <NH3 prefix="bar">
+                        <NText type="primary">修改</NText>
+                    </NH3>
+                    <NH6 prefix="bar">
+                        <div class="text-13 w100">
+                            起个名~
+                        </div>
+                        <NInput v-model:value="gallery.name" maxlength="64" show-count />
+                    </NH6>
+                    <NH6 prefix="bar">
+                        <div class="text-13 w100">
+                            人员（可以留空）
+                        </div>
+                        <NInputGroup>
+                            <NInput placeholder="coser" v-model:value="gallery.cosers" maxlength="64" show-count />
+                            <NInput placeholder="摄影师" v-model:value="gallery.photographers" maxlength="64" show-count />
+                            <NInput placeholder="角色" v-model:value="gallery.character" maxlength="64" show-count />
+                        </NInputGroup>
+                    </NH6>
+                    <NH6 prefix="bar">
+                        <div class="text-13 w100">
+                            简单的介绍（可以留空）
+                        </div>
+                        <NInput v-model:value="gallery.description" maxlength="1024" type="textarea" show-count />
+                    </NH6>
+                    <NH6 prefix="bar">
+                        <NUpload :multiple="false" directory-dnd :custom-request="uploadImage"
+                            v-model:file-list="uploadFileList">
+                            <NUploadDragger>
+                                <div style="margin-bottom: 12px">
+                                    <NIcon size="48" :depth="3">
+                                        <ImageIcon />
+                                    </NIcon>
+                                </div>
+                                <NText style="font-size: 16px">
+                                    上传新的照片
+                                </NText>
+                                <NP depth="3" style="margin: 8px 0 0 0">
+                                    请确保您上传的图片符合相关国家法律法规，且不要上传敏感数据
+                                </NP>
+                            </NUploadDragger>
+                        </NUpload>
+                    </NH6>
+                    <NH3 prefix="bar">
+                        <NButton block type="primary" @click="updateGallery">更新</NButton>
+                    </NH3>
+                </NGi>
+                <NGi>
+                    <NH3 prefix="bar">
+                        <NText type="primary">图片</NText>
+                    </NH3>
+                    <NGrid cols="1" style="max-height: 80vh; overflow-y: scroll;" y-gap="12">
+                        <NGi v-for="image in gallery.images">
+                            <div>
+                                <NTag v-if="image.camera" type="primary" :bordered="false" size="small">
+                                    <template #icon>
+                                        <NIcon :component="Camera"></NIcon>
+                                    </template>
+                                    {{ image.camera }}
+                                </NTag>
+                                <NTag v-if="image.lens" type="primary" :bordered="false" size="small">
+                                    <template #icon>
+                                        <NIcon :component="Telescope"></NIcon>
+                                    </template>
+                                    {{ image.lens }}
+                                </NTag>
+                                <NTag v-if="image.focal_length" type="primary" :bordered="false" size="small">
+                                    <template #icon>
+                                        <NIcon :component="Eye"></NIcon>
+                                    </template>
+                                    焦距{{ image.focal_length }}
+                                </NTag>
+                            </div>
+                            <div class="w100" style="height: 300px;">
+                                <NImage class="w100" :width="imageWidth"
+                                    :height="300" :src="image.url + '?x-oss-process=image/resize,m_fill,h_400,w_800'" object-fit="cover"
+                                    alt="加载失败"></NImage>
+                            </div>
+                        </NGi>
+                    </NGrid>
+                </NGi>
+            </NGrid>
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { PropType, onMounted, ref } from 'vue'
+import { Gallery, Place } from '../interface/types'
+import { DialogApi, NButton, NGi, NGrid, NH3, NH6, NIcon, NImage, NInput, NInputGroup, NResult, NTag, NText, NUpload, NUploadDragger, UploadCustomRequestOptions } from 'naive-ui'
+import { apiCreateGallery, apiGalleryUploadImage } from '../interface/cos'
+import { getBrowserKey } from '../store/key'
+import { Camera, Eye, Image as ImageIcon, Telescope } from '@vicons/ionicons5'
+import { getExif } from '../utils/camera'
+import { FileInfo } from 'naive-ui/es/upload/src/interface'
+import { getDefaultCoser, getDefaultPhotographer, setDefaultCoser, setDefaultPhotographer } from '../store/role'
+
+const imageWidth = ref(0)
+const galleryRef = ref<HTMLDivElement | null>(null)
+onMounted(() => {
+    setTimeout(() => {
+        if (!galleryRef.value) {
+            return
+        }
+        imageWidth.value = galleryRef.value.clientWidth / 2 - 12
+    })
+})
+
+const props = defineProps({
+    galleryId: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    placeId: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    gallery: {
+        type: Object as PropType<Gallery>,
+        required: false,
+        default: () => ({} as Gallery)
+    }
+})
+
+const emits = defineEmits<{
+    (event: 'created', gallery: Gallery): void
+    (event: 'updated', gallery: Gallery): void
+}>()
+
+const gallery = ref<Gallery>({
+    ID: 0,
+    CreatedAt: '',
+    UpdatedAt: '',
+    DeletedAt: '',
+    name: '',
+    cosers: '',
+    photographers: '',
+    description: '',
+    character: '',
+    series: '',
+    place_id: 0,
+    place: {} as Place,
+    tags: [],
+    images: [],
+    key: '',
+})
+
+const createGallery = async () => {
+    // @ts-ignore
+    const dialog = window.$dialog as DialogApi
+    let wait = 0
+    if (gallery.value.cosers) {
+        const defaultCoser = await getDefaultCoser()
+        if (!defaultCoser) {
+            wait += 1
+            dialog.info({
+                title: '缓存确认',
+                content: `您是否确认使用 ${gallery.value.cosers} 作为默认的coser？`,
+                positiveText: '确认',
+                negativeText: '不需要默认coser',
+                onPositiveClick: () => {
+                    setDefaultCoser(gallery.value.cosers)
+                    wait -= 1
+                },
+                onClose: () => {
+                    wait -= 1
+                },
+                onNegativeClick: () => {
+                    setDefaultCoser(' ')
+                    wait -= 1
+                },
+                onMaskClick: () => {
+                    wait -= 1
+                }
+            })
+        }
+    }
+    if (gallery.value.photographers) {
+        const defaultPhotographer = await getDefaultPhotographer()
+        if (!defaultPhotographer) {
+            wait += 1
+            dialog.info({
+                title: '缓存确认',
+                content: `您是否确认使用 ${gallery.value.photographers} 作为默认的摄影师？`,
+                positiveText: '确认',
+                negativeText: '不需要默认摄影师',
+                onPositiveClick: () => {
+                    setDefaultPhotographer(gallery.value.photographers)
+                    wait -= 1
+                },
+                onClose: () => {
+                    wait -= 1
+                },
+                onNegativeClick: () => {
+                    setDefaultPhotographer(' ')
+                    wait -= 1
+                },
+                onMaskClick: () => {
+                    wait -= 1
+                }
+            })
+        }
+    }
+
+    while (wait > 0) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+    }
+
+    const response = await apiCreateGallery(
+        props.placeId, gallery.value.name, gallery.value.cosers, gallery.value.description,
+        gallery.value.photographers, gallery.value.character, gallery.value.series, gallery.value.tags.map(tag => tag.ID),
+        getBrowserKey()
+    )
+
+    if (!response.isSuccess()) {
+        // @ts-ignore
+        window.$message.error(response.message)
+        return
+    }
+
+    gallery.value.ID = response.data?.id || 0
+
+    emits('created', gallery.value)
+}
+
+const uploadFileList = ref<FileInfo[]>([])
+const uploadImage = async ({
+    file,
+    onFinish,
+    onError,
+    onProgress
+}: UploadCustomRequestOptions) => {
+    if (!file.file) {
+        return
+    }
+
+    if (['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff', 'image/webp', 'image/svg+xml', 'image/x-icon', 'image/heif'].indexOf(file.file.type) === -1) {
+        // @ts-ignore
+        window.$message.error('不支持的文件类型')
+        return
+    }
+
+    const exif = await getExif(file.file)
+
+    let index = 0
+    let timer = setInterval(() => {
+        onProgress({
+            percent: index
+        })
+        index++
+        if (index == 99) {
+            clearInterval(timer)
+            return
+        }
+    }, 100)
+
+    const response = await apiGalleryUploadImage(
+        gallery.value.ID, file.name, getBrowserKey(), file.type || '', exif.camera, exif.lens, exif.focal,
+        file.file as File
+    )
+    clearInterval(timer)
+    onFinish()
+
+    uploadFileList.value.pop()
+
+    if (!response.isSuccess()) {
+        // @ts-ignore
+        window.$message.error(response.message)
+        return
+    }
+
+    gallery.value.images.push({
+        ID: response.data?.id || 0,
+        CreatedAt: '',
+        UpdatedAt: '',
+        DeletedAt: '',
+        gallery_id: gallery.value.ID,
+        url: response.data?.url || '',
+        camera: exif.camera,
+        lens: exif.lens,
+        focal_length: exif.focal,
+    })
+
+    emits('updated', gallery.value)
+}
+
+const updateGallery = async () => {
+
+}
+
+onMounted(async () => {
+    if (!props.placeId) {
+        // @ts-ignore
+        window.$message.error('Place id is required')
+        return
+    }
+    if (props.galleryId) {
+        gallery.value.ID = props.galleryId
+        gallery.value.name = props.gallery.name
+        gallery.value.cosers = props.gallery.cosers
+        gallery.value.photographers = props.gallery.photographers
+        gallery.value.description = props.gallery.description
+        gallery.value.character = props.gallery.character
+        gallery.value.series = props.gallery.series
+        gallery.value.tags = props.gallery.tags
+        gallery.value.images = props.gallery.images
+        return
+    } else {
+        const photographers = await getDefaultPhotographer()
+        gallery.value.photographers = photographers
+        const coser = await getDefaultCoser()
+        gallery.value.cosers = coser
+    }
+})
+
+</script>
+
+<style scoped></style>

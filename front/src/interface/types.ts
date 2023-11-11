@@ -50,6 +50,7 @@ export type Image = {
     camera: string;
     lens: string;
     focal_length: string;
+    gallery_id: number;
 }
 
 export type GalleryTag = {
