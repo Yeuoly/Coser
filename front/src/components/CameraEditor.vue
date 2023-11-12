@@ -1,8 +1,8 @@
 <template>
     <div class="c-c-camera-editor">
         <NInputGroup>
-            <NAutoComplete :options="cameraOptions" v-model:value="camera.camera" placeholder="相机"></NAutoComplete>
-            <NAutoComplete :options="lensOptions" v-model:value="camera.lens" placeholder="镜头"></NAutoComplete>
+            <NAutoComplete :options="cameraOptions" v-model:value="camera.camera" placeholder="相机（使用英文会有自动补全）"></NAutoComplete>
+            <NAutoComplete :options="lensOptions" v-model:value="camera.lens" placeholder="镜头（使用英文会有自动补全）"></NAutoComplete>
         </NInputGroup>
         <NInputGroup>
             <NInputNumber v-model:value="camera.focal" placeholder="焦段">

@@ -115,6 +115,13 @@
                                     </template>
                                     删除
                                 </NTag>
+                                <NTag type="info" :bordered="false" size="small" class="clickable"
+                                    @click="replaceCamera(image.exif)">
+                                    <template #icon>
+                                        <NIcon :component="Save"></NIcon>
+                                    </template>
+                                    将所有照片相机/镜头设置为当前相机/镜头
+                                </NTag>
                                 <NTag type="primary" :bordered="false" size="small" class="clickable"
                                     @click="updateImage(image)">
                                     >
@@ -217,6 +224,17 @@ watch(props.gallery, () => {
         }
     })
 }, { immediate: true, deep: true })
+
+const replaceCamera = (exif: any) => {
+    gallery.value.images.forEach((image, k) => {
+        gallery.value.images[k].exif.camera = exif.camera
+        gallery.value.images[k].exif.lens = exif.lens
+        gallery.value.images[k].exif.focal = exif.focal
+    })
+    
+    // @ts-ignore
+    window.$message.success('更新成功，但是您需要手动保存，以避免全自动保存导致的不可挽回的误操作')
+}
 
 const creating = ref(false)
 const createGallery = async () => {
