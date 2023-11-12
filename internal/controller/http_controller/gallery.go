@@ -29,8 +29,8 @@ func HandleUpdateGallery(c *gin.Context) {
 		ID            uint   `json:"id" binding:"required"`
 		PlaceID       uint   `json:"place_id" binding:"required"`
 		Name          string `json:"name" binding:"required,max=64"`
-		Cosers        string `json:"cosers" binding:"required,max=1024"`
-		Photographers string `json:"photographers" binding:"required,max=1024"`
+		Cosers        string `json:"cosers" binding:"max=1024"`
+		Photographers string `json:"photographers" binding:"max=1024"`
 		Description   string `json:"description" binding:"max=1024"`
 		Character     string `json:"character" binding:"max=1024"`
 		Series        string `json:"series" binding:"max=1024"`
@@ -39,6 +39,7 @@ func HandleUpdateGallery(c *gin.Context) {
 	}
 
 	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.UpdateGallery(r.ID, r.PlaceID, r.Name, r.Cosers, r.Photographers, r.Description, r.Character, r.Series, r.Tags, r.Key, c.ClientIP()))
 	})
 }
 
@@ -59,6 +60,7 @@ func HandleGallerySearch(c *gin.Context) {
 	}
 
 	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.SearchGallery(r.Keyword))
 	})
 }
 
@@ -98,6 +100,7 @@ func HandleGalleryDeleteImage(c *gin.Context) {
 	}
 
 	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.DeleteGalleryImage(r.GalleryID, r.Id, r.Key))
 	})
 }
 

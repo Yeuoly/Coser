@@ -52,7 +52,8 @@
                         封面预览
                     </div>
                     <div class="w100" style="height: 300px;">
-                        <NImage style="border-radius: 12px;" :src="newPlaceForm.avatar" object-fit="cover" height="300" width="450"></NImage>
+                        <NImage style="border-radius: 12px;" :src="newPlaceForm.avatar" object-fit="cover" height="300"
+                            width="450"></NImage>
                     </div>
                 </NH6>
                 <NH6 prefix="bar" class="w100">
@@ -60,10 +61,12 @@
                 </NH6>
             </div>
             <div v-else>
-                <NH3 prefix="bar">
-                    <NText type="primary">{{ currentPlace.name }}</NText>
-                </NH3>
                 <NThing>
+                    <template #header>
+                        <NText type="primari">
+                            {{ currentPlace.name }}
+                        </NText>
+                    </template>
                     <img :src="currentPlace.avatar" style="width: 100%; height: 300px; object-fit: contain;" />
                     <template #footer>
                         <div class="text-13">
@@ -71,7 +74,31 @@
                         </div>
                     </template>
                     <template #header-extra>
-                        创建于{{ new Date(currentPlace.CreatedAt).toLocaleString() }}
+                        <NPopover trigger="hover" style="padding: 0;">
+                            <template #trigger>
+                                <NButton text>
+                                    <template #icon>
+                                        <NIcon :component="Menu"></NIcon>
+                                    </template>
+                                </NButton>
+                            </template>
+                            <div>
+                                <NButtonGroup vertical>
+                                    <NButton type="primary" @click="updatePlace">
+                                        <template #icon>
+                                            <NIcon :component="CreateOutline"></NIcon>
+                                        </template>
+                                        编辑地点
+                                    </NButton>
+                                    <NButton type="error" @click="deletePlace(currentPlace.ID)">
+                                        <template #icon>
+                                            <NIcon :component="TrashBinOutline"></NIcon>
+                                        </template>
+                                        删除地点
+                                    </NButton>
+                                </NButtonGroup>
+                            </div>
+                        </NPopover>
                     </template>
                 </NThing>
                 <NDivider></NDivider>
@@ -120,8 +147,8 @@
                                 </NTooltip>
                             </NButtonGroup>
                         </template>
-                        <NImage style="border-radius: 12px;" width="450" object-fit="cover" height="300"
-                            :src="(gallery.images && gallery.images.length > 0) ? gallery.images[0].url + '?x-oss-process=image/resize,m_fill,h_400,w_800' : ''">
+                        <NImage style="border-radius: 12px;" width="450" object-fit="contain" height="300"
+                            :src="(gallery.images && gallery.images.length > 0) ? gallery.images[0].url + '?x-oss-process=image/resize,mfit,h_400,w_800' : ''">
                         </NImage>
                         <NDivider></NDivider>
                     </NThing>
@@ -136,16 +163,16 @@ import { computed, h, ref } from 'vue'
 import BMap from '../components/BMap.vue'
 import { Gallery, Place } from '../interface/types'
 import {
-    NButton, NButtonGroup, NDivider, NDrawer, NDrawerContent, NH3, NH6,
-    NIcon, NImage, NInput, NP, NResult, NText,
+    NButton, NButtonGroup, NDivider, NDrawer, NDrawerContent, NDropdown, NH3, NH6,
+    NIcon, NImage, NInput, NP, NPopover, NResult, NText,
     NThing,
     NTooltip,
     NUpload, NUploadDragger, UploadCustomRequestOptions,
     useDialog, useMessage
 } from 'naive-ui'
 import { apiUploadFile } from '../interface/file'
-import { CreateOutline, Image, Trash } from '@vicons/ionicons5'
-import { apiCreatePlace, apiPlaceInfo, apiPlaceNearby, apiGalleryDelete } from '../interface/cos'
+import { CreateOutline, Image, Menu, Trash, TrashBinOutline } from '@vicons/ionicons5'
+import { apiCreatePlace, apiPlaceInfo, apiPlaceNearby, apiGalleryDelete, apiDeletPlace, apiUpdatePlace } from '../interface/cos'
 import { getBrowserKey } from '../store/key'
 import GalleryEditor from './GalleryEditor.vue'
 
@@ -195,10 +222,17 @@ const uploadAvatar = async ({
     }
 }
 
+const creating = ref<boolean>(false)
 const createPlace = async () => {
+    if (creating.value) {
+        message.warning('创建中')
+        return
+    }
+    creating.value = true
     const response = await apiCreatePlace(
         newPlaceForm.value.name, newPlaceForm.value.description, newPlaceForm.value.lat, newPlaceForm.value.lng, getBrowserKey(), newPlaceForm.value.avatar
     )
+    creating.value = false
 
     if (!response.isSuccess()) {
         message.error(response.getError())
@@ -221,6 +255,120 @@ const createPlace = async () => {
     }
 }
 
+const updatePlace = () => {
+    dialog.create({
+        style: {
+            width: '800px'
+        },
+        title: '编辑',
+        closable: true,
+        content: () => [
+            h(NH6, { prefix: 'bar' }, {
+                default: () => [
+                    h('div', { class: 'text-13 w100' }, '这里是哪'),
+                    h(NInput, {
+                        value: currentPlace.value?.name,
+                        maxlength: 64,
+                        showCount: true,
+                        onUpdateValue: (v: string) => {
+                            currentPlace.value!.name = v
+                        }
+                    }),
+                ]
+            }),
+            h(NH6, { prefix: 'bar' }, {
+                default: () => [
+                    h('div', { class: 'text-13 w100' }, '简单描述一下'),
+                    h(NInput, {
+                        value: currentPlace.value?.description,
+                        maxlength: 1024,
+                        type: 'textarea',
+                        showCount: true,
+                        onUpdateValue: (v: string) => {
+                            currentPlace.value!.description = v
+                        }
+                    }),
+                ]
+            }),
+            h(NH6, { prefix: 'bar' }, {
+                default: () => [
+                    h('div', { class: 'text-13 w100' }, '上传一张封面吧'),
+                    h(NUpload, {
+                        directoryDnd: true,
+                        max: 5,
+                        customRequest: uploadAvatar,
+                    }, {
+                        default: () => [
+                            h(NUploadDragger, {
+                                style: {
+                                    height: '200px',
+                                }
+                            }, {
+                                default: () => [
+                                    h(NIcon, {
+                                        size: 48,
+                                        depth: 3,
+                                    }, {
+                                        default: () => h(Image)
+                                    }),
+                                    h(NText, {
+                                        style: {
+                                            fontSize: '16px',
+                                        }
+                                    }, {
+                                        default: () => '点击或者拖动文件到该区域来上传'
+                                    }),
+                                    h(NP, {
+                                        depth: 3,
+                                        style: {
+                                            margin: '8px 0 0 0',
+                                        }
+                                    }, {
+                                        default: () => '请不要上传敏感数据，比如你的银行卡号和密码，信用卡号有效期和安全码'
+                                    }),
+                                ]
+                            })
+                        ]
+                    }),
+                ]
+            }),
+        ],
+        positiveText: '更新',
+        onPositiveClick: async () => {
+            currentPlace.value!.avatar = newPlaceForm.value.avatar
+            const response = await apiUpdatePlace(
+                currentPlace.value!.ID, currentPlace.value!.name, currentPlace.value!.description, 
+                currentPlace.value?.point.y || 0, currentPlace.value?.point.x || 0, 
+                getBrowserKey(), newPlaceForm.value.avatar
+            )
+
+            if (!response.isSuccess()) {
+                message.error(response.getError())
+            } else {
+                message.success('更新成功')
+                const index = places.value.findIndex(v => v.ID === currentPlace.value?.ID)
+                if (index !== undefined && index !== -1) {
+                    places.value.splice(index, 1, currentPlace.value!)
+                }
+                currentPlace.value = places.value[index]
+            }
+        }
+    })
+}
+
+const deletePlace = async (id: number) => {
+    const response = await apiDeletPlace(id, getBrowserKey())
+    if (!response.isSuccess()) {
+        message.error(response.getError())
+    } else {
+        message.success('删除成功')
+        const index = places.value.findIndex(v => v.ID === id)
+        if (index !== undefined && index !== -1) {
+            places.value.splice(index, 1)
+        }
+        showPlace.value = false
+    }
+}
 
 const fetchNearbyPlaces = async (lat: number, lng: number) => {
     const response = await apiPlaceNearby(lat, lng)
@@ -285,7 +433,7 @@ const handleMapLocate = (e: {
 }
 
 const createGallery = () => {
-    const dialogController = dialog.create({
+    dialog.create({
         style: {
             width: '1000px'
         },
@@ -295,6 +443,10 @@ const createGallery = () => {
             galleryId: 0,
             placeId: currentPlace.value?.ID || 0,
             onCreated: (gallery: Gallery) => {
+                // check if galleries exists
+                if (!currentPlace.value?.galleries) {
+                    currentPlace.value!.galleries = []
+                }
                 currentPlace.value?.galleries?.push(gallery)
             },
             onUpdated: (gallery: Gallery) => {
@@ -308,7 +460,7 @@ const createGallery = () => {
 }
 
 const updateGallery = async (gallery: Gallery) => {
-    const dialogController = dialog.create({
+    dialog.create({
         style: {
             width: '1000px'
         },

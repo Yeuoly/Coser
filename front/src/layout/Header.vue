@@ -9,12 +9,12 @@
 </template>
 
 <script setup lang="ts">
-import { NLayoutHeader, NMenu, MenuOption, NPageHeader, NIcon, NAvatar, NText, NDropdown, FormInst, NH2 } from 'naive-ui'
+import { NLayoutHeader, NMenu, MenuOption, NPageHeader, NIcon, NAvatar, NText, NDropdown, FormInst, NH2, NInput, NInputGroup, NInputGroupLabel, NButton } from 'naive-ui'
 import { computed, h, onMounted, watch, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { getAssetsFile } from '../utils/index'
 import { setLocale } from '../locale/index'
-import { BatteryChargingOutline, InformationCircleOutline, LanguageOutline, LogInOutline, LogInSharp, LogOutOutline } from '@vicons/ionicons5'
+import { BatteryChargingOutline, InformationCircleOutline, LanguageOutline, LogInOutline, LogInSharp, LogOutOutline, Map, Search, SearchCircleOutline } from '@vicons/ionicons5'
 const { t: $t } = useI18n()
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -41,6 +41,22 @@ const mainMenu = computed((): MenuOption[] => {
             label: () => h(NH2, { style: {
                 marginTop: '20px',
             } }, { default: () => 'Coshub' })
+        },
+        {
+            label: () => h('div', {
+                onClick: () => {
+                    router.push('/map')
+                }
+            }, '地图'),
+            icon: () => h(NIcon, { clsPrefix: 'ion', size: 20 }, { default: () => h(Map) }),
+        },
+        {
+            label: () => h('div', {
+                onClick: () => {
+                    router.push('/search')
+                }
+            }, '综合搜索'),
+            icon: () => h(NIcon, { clsPrefix: 'ion', size: 20 }, { default: () => h(Search) }),
         }
     ]
     return menu

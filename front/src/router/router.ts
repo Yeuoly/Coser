@@ -11,6 +11,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/Map.vue')
     },
     {
+        path: '/search',
+        name: 'Search',
+        component: () => import('../views/Search.vue')
+    },
+    {
         path: '/:catchAll(.*)',
         name: 'NotFound',
         redirect: '/map'

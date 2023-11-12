@@ -15,6 +15,7 @@ func Setup(eng *gin.Engine, config *types.CoshubGlobalConfigurations) {
 
 	eng.POST("/v1/place/create", http_controller.HandlePlaceCreate)
 	eng.POST("/v1/place/update", http_controller.HandlePlaceUpdate)
+	eng.POST("/v1/place/delete", http_controller.HandlePlaceDelete)
 	eng.GET("/v1/place/info", http_controller.HandlePlaceInfo)
 	eng.GET("/v1/place/list", http_controller.HandlePlaceList)
 	eng.GET("/v1/place/nearby", http_controller.HandlePlaceNearby)

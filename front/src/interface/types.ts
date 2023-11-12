@@ -59,6 +59,7 @@ export type GalleryTag = {
     UpdatedAt: string;
     DeletedAt: string;
     name: string;
+    galleries: Gallery[];
 }
 
 export type Gallery = {

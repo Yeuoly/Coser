@@ -77,6 +77,80 @@ func CreateGallery(placeID uint, name, cosers, photographers, description, chara
 	return types.SuccessResponse(response{gallery.ID})
 }
 
+func UpdateGallery(id uint, placeID uint, name, cosers, photographers, description, character, series string, tags []uint, key string, ip string) *types.CoshubResponse {
+	type response struct {
+		ID uint `json:"id"`
+	}
+
+	// check if every tags exists
+	tags_obj, err := db.GetAll[types.Tag](
+		db.InArray("id", slice.Map(func(r uint) interface{} {
+			return r
+		}, tags)),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	if len(tags_obj) != len(tags) {
+		return types.ErrorResponse(-400, "有不存在的标签")
+	}
+
+	// check if place exists
+	_, err = db.GetOne[types.Place](
+		db.Equal("id", placeID),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	gallery, err := db.GetOne[types.Gallery](
+		db.Equal("id", id),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	if gallery.Key != key {
+		return types.ErrorResponse(-403, "key错误")
+	}
+
+	gallery.PlaceId = placeID
+	gallery.Name = name
+	gallery.Cosers = cosers
+	gallery.Photographers = photographers
+	gallery.Description = description
+	gallery.Character = character
+	gallery.Series = series
+	gallery.Ip = ip
+
+	err = db.WithTransaction(func(tx *gorm.DB) error {
+		err = db.Update(gallery, tx)
+
+		if err != nil {
+			return err
+		}
+
+		// append tags association
+		err = db.ReplaceAssociation(&gallery, "Tags", tags_obj, tx)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	return types.SuccessResponse(response{gallery.ID})
+}
+
 func GetGalleryInfo(id uint) *types.CoshubResponse {
 	type response struct {
 		Gallery types.Gallery `json:"gallery"`
@@ -94,6 +168,61 @@ func GetGalleryInfo(id uint) *types.CoshubResponse {
 
 	return types.SuccessResponse(response{
 		Gallery: gallery,
+	})
+}
+
+func SearchGallery(keyword string) *types.CoshubResponse {
+	type response struct {
+		Galleries []types.Gallery `json:"galleries"`
+	}
+
+	// 1. search name
+	galleries, err := db.GetAll[types.Gallery](
+		db.Like("name", keyword),
+		db.Page(1, 10),
+		db.Preload("Images"),
+		db.Preload("Tags"),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	// 2. search tags
+	tags, err := db.GetAll[types.Tag](
+		db.Like("name", keyword),
+		db.Page(1, 10),
+		db.Preload("Galleries"),
+		db.Preload("Galleries.Images"),
+		db.Preload("Galleries.Tags"),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	// 3. merge
+	result := make(map[uint]types.Gallery)
+
+	for _, gallery := range galleries {
+		result[gallery.ID] = gallery
+	}
+
+	for _, tag := range tags {
+		for _, gallery := range tag.Galleries {
+			result[gallery.ID] = gallery
+		}
+	}
+
+	// 4. convert to array
+	galleries = make([]types.Gallery, 0, len(result))
+	for _, gallery := range result {
+		gallery.ClearSensitive()
+		galleries = append(galleries, gallery)
+	}
+
+	return types.SuccessResponse(response{
+		Galleries: galleries,
 	})
 }
 
@@ -146,6 +275,44 @@ func UploadGallery(galleryID uint, filename string, contentType string, camera s
 		Url: url,
 		Id:  image.ID,
 	})
+}
+
+func DeleteGalleryImage(galleryID uint, id uint, key string) *types.CoshubResponse {
+	gallery, err := db.GetOne[types.Gallery](
+		db.Equal("id", galleryID),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	if gallery.Key != key {
+		return types.ErrorResponse(-403, "key错误")
+	}
+
+	image, err := db.GetOne[types.Image](
+		db.Equal("id", id),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	err = db.WithTransaction(func(tx *gorm.DB) error {
+		err = db.Delete(&image, tx)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	return types.SuccessResponse(nil)
 }
 
 func DeleteGallery(id uint, key string) *types.CoshubResponse {

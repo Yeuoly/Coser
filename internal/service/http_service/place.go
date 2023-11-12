@@ -76,6 +76,42 @@ func GetNearbyPlaces(lat float64, lng float64) *types.CoshubResponse {
 	})
 }
 
+func UpdatePlace(id uint, name string, description string, lat float64, lng float64, avatar string, key string) *types.CoshubResponse {
+	type response struct {
+		ID uint `json:"id"`
+	}
+
+	place, err := db.GetOne[types.Place](
+		db.Equal("id", id),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	if place.Key != key {
+		return types.ErrorResponse(-403, "权限不足")
+	}
+
+	x, y := coordinate.LL2XY(lng, lat)
+
+	place.Name = name
+	place.Description = description
+	place.Point.X = x
+	place.Point.Y = y
+	place.Avatar = avatar
+
+	err = db.Update(&place)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	return types.SuccessResponse(response{
+		ID: place.ID,
+	})
+}
+
 func GetPlaceInfo(id uint) *types.CoshubResponse {
 	type response struct {
 		Place types.Place `json:"place"`
@@ -97,4 +133,28 @@ func GetPlaceInfo(id uint) *types.CoshubResponse {
 	return types.SuccessResponse(response{
 		Place: place,
 	})
+}
+
+func DeletePlace(id uint, key string) *types.CoshubResponse {
+	type response struct{}
+
+	place, err := db.GetOne[types.Place](
+		db.Equal("id", id),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	if place.Key != key {
+		return types.ErrorResponse(-403, "权限不足")
+	}
+
+	err = db.Delete(&place)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	return types.SuccessResponse(response{})
 }

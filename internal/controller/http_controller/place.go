@@ -33,6 +33,7 @@ func HandlePlaceUpdate(c *gin.Context) {
 	}
 
 	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.UpdatePlace(r.ID, r.Name, r.Description, r.Lat, r.Lng, r.Avatar, r.Key))
 	})
 }
 
@@ -43,6 +44,17 @@ func HandlePlaceInfo(c *gin.Context) {
 
 	controller.BindRequest(c, func(r request) {
 		c.JSON(200, http_service.GetPlaceInfo(r.ID))
+	})
+}
+
+func HandlePlaceDelete(c *gin.Context) {
+	type request struct {
+		ID  uint   `json:"id" binding:"required" form:"id"`
+		Key string `json:"key" binding:"required,max=64"`
+	}
+
+	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.DeletePlace(r.ID, r.Key))
 	})
 }
 

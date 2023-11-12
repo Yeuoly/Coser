@@ -305,3 +305,11 @@
   .br12 {
     border-radius: 12px;
   }
+
+  .max-container {
+    max-width: 1200px;
+  }
+
+  .default-container {
+    margin: 0 auto;
+  }

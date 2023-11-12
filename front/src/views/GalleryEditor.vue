@@ -70,7 +70,7 @@
                         <NInput v-model:value="gallery.description" maxlength="1024" type="textarea" show-count />
                     </NH6>
                     <NH6 prefix="bar">
-                        <NUpload :multiple="false" directory-dnd :custom-request="uploadImage"
+                        <NUpload multiple directory-dnd :custom-request="uploadImage"
                             v-model:file-list="uploadFileList">
                             <NUploadDragger>
                                 <div style="margin-bottom: 12px">
@@ -87,6 +87,15 @@
                             </NUploadDragger>
                         </NUpload>
                     </NH6>
+                    <NH6 prefix="bar">
+                        <div class="text-13 w100">
+                            标签（Tag）
+                        </div>
+                        <NTag closable class="mb1" v-for="tag in gallery.tags" type="info" @close="removeTag(tag)">{{
+                            tag.name }}</NTag>
+                        <NAutoComplete @select="createTag" :options="tagOptions" placeholder="回车添加" v-model:value="tagName"
+                            maxlength="64" show-count @keypress.enter="createTag" />
+                    </NH6>
                     <NH3 prefix="bar">
                         <NButton block type="primary" @click="updateGallery">更新</NButton>
                     </NH3>
@@ -95,7 +104,7 @@
                     <NH3 prefix="bar">
                         <NText type="primary">图片</NText>
                     </NH3>
-                    <NGrid cols="1" style="max-height: 80vh; overflow-y: scroll;" y-gap="12">
+                    <NGrid cols="1" style="max-height: 80vh; overflow-x: hidden; overflow-y: auto;" y-gap="12">
                         <NGi v-for="image in gallery.images">
                             <div>
                                 <NTag v-if="image.camera" type="primary" :bordered="false" size="small">
@@ -116,10 +125,17 @@
                                     </template>
                                     焦距{{ image.focal_length }}
                                 </NTag>
+                                <NTag type="error" :bordered="false" size="small" class="clickable"
+                                    @click="removeImage(image)">
+                                    <template #icon>
+                                        <NIcon :component="Trash"></NIcon>
+                                    </template>
+                                    删除
+                                </NTag>
                             </div>
-                            <div class="w100" style="height: 300px;">
-                                <NImage class="w100" :width="imageWidth"
-                                    :height="300" :src="image.url + '?x-oss-process=image/resize,m_fill,h_400,w_800'" object-fit="cover"
+                            <div class="w100">
+                                <NImage :width="imageWidth" :height="300"
+                                    :src="image.url + '?x-oss-process=image/resize,mfit,h_400,w_800'" object-fit="cover"
                                     alt="加载失败"></NImage>
                             </div>
                         </NGi>
@@ -131,15 +147,16 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, onMounted, ref } from 'vue'
-import { Gallery, Place } from '../interface/types'
-import { DialogApi, NButton, NGi, NGrid, NH3, NH6, NIcon, NImage, NInput, NInputGroup, NResult, NTag, NText, NUpload, NUploadDragger, UploadCustomRequestOptions } from 'naive-ui'
-import { apiCreateGallery, apiGalleryUploadImage } from '../interface/cos'
+import { PropType, VNodeChild, h, onMounted, ref, watch } from 'vue'
+import { Gallery, GalleryTag, Image, Place } from '../interface/types'
+import { DialogApi, NAutoComplete, NButton, NGi, NGrid, NH3, NH6, NIcon, NImage, NInput, NInputGroup, NResult, NTag, NText, NUpload, NUploadDragger, SelectOption, UploadCustomRequestOptions } from 'naive-ui'
+import { apiCreateGallery, apiGalleryUploadImage, apiGalleryRemoveImage, apiUpdateGallery } from '../interface/cos'
 import { getBrowserKey } from '../store/key'
-import { Camera, Eye, Image as ImageIcon, Telescope } from '@vicons/ionicons5'
+import { Camera, Eye, Image as ImageIcon, Telescope, Trash } from '@vicons/ionicons5'
 import { getExif } from '../utils/camera'
 import { FileInfo } from 'naive-ui/es/upload/src/interface'
 import { getDefaultCoser, getDefaultPhotographer, setDefaultCoser, setDefaultPhotographer } from '../store/role'
+import { apiCreateTag, apiSearchTag } from '../interface/cos'
 
 const imageWidth = ref(0)
 const galleryRef = ref<HTMLDivElement | null>(null)
@@ -193,7 +210,14 @@ const gallery = ref<Gallery>({
     key: '',
 })
 
+const creating = ref(false)
 const createGallery = async () => {
+    if (creating.value) {
+        // @ts-ignore
+        window.$message.error('创建中')
+        return
+    }
+    creating.value = true
     // @ts-ignore
     const dialog = window.$dialog as DialogApi
     let wait = 0
@@ -259,6 +283,8 @@ const createGallery = async () => {
         gallery.value.photographers, gallery.value.character, gallery.value.series, gallery.value.tags.map(tag => tag.ID),
         getBrowserKey()
     )
+
+    creating.value = false
 
     if (!response.isSuccess()) {
         // @ts-ignore
@@ -333,7 +359,85 @@ const uploadImage = async ({
 }
 
 const updateGallery = async () => {
+    const response = await apiUpdateGallery(
+        gallery.value.ID, props.placeId, gallery.value.name, gallery.value.cosers, gallery.value.description,
+        gallery.value.photographers, gallery.value.character, gallery.value.series, gallery.value.tags.map(tag => tag.ID),
+        getBrowserKey()
+    )
 
+    if (!response.isSuccess()) {
+        // @ts-ignore
+        window.$message.error(response.message)
+        return
+    }
+
+    emits('updated', gallery.value)
+
+    // @ts-ignore
+    window.$message.success('更新成功')
+}
+
+const tagName = ref('')
+let timer = 0
+watch(tagName, () => {
+    clearTimeout(timer)
+    timer = setTimeout(async () => {
+        if (!tagName.value) {
+            return
+        }
+        const response = await apiSearchTag(tagName.value)
+        if (!response.isSuccess()) {
+            // @ts-ignore
+            window.$message.error(response.message)
+            return
+        }
+
+        tagOptions.value = response.data?.tags?.map(item => ({
+            value: item.ID.toString(),
+            label: item.name
+        })) || []
+    }, 300)
+})
+const tagOptions = ref<{
+    value: string
+    label: string
+}[]>()
+const removeImage = async (image: Image) => {
+    const response = await apiGalleryRemoveImage(gallery.value.ID, image.ID, getBrowserKey())
+    if (!response.isSuccess()) {
+        // @ts-ignore
+        window.$message.error(response.message)
+        return
+    }
+
+    gallery.value.images = gallery.value.images.filter(item => item.ID !== image.ID)
+    emits('updated', gallery.value)
+}
+
+const createTag = async () => {
+    setTimeout(async () => {
+        const name = tagName.value.trim()
+        const response = await apiCreateTag(name)
+        tagName.value = ''
+        if (!response.isSuccess()) {
+            // @ts-ignore
+            window.$message.error(response.message)
+            return
+        }
+
+        gallery.value.tags.push({
+            ID: response.data?.id || 0,
+            CreatedAt: '',
+            UpdatedAt: '',
+            DeletedAt: '',
+            name: name,
+            galleries: []
+        })
+    })
+}
+
+const removeTag = (tag: GalleryTag) => {
+    gallery.value.tags.splice(gallery.value.tags.indexOf(tag), 1)
 }
 
 onMounted(async () => {
