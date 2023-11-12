@@ -1,9 +1,7 @@
 package types
 
-import "gorm.io/gorm"
-
 type Gallery struct {
-	gorm.Model
+	Model
 	Name          string  `gorm:"index;not null;size:64" json:"name"`
 	Cosers        string  `gorm:"not null;size:1024" json:"cosers"`        // CN
 	Photographers string  `gorm:"not null;size:1024" json:"photographers"` // CN

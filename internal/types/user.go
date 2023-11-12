@@ -3,7 +3,7 @@ package types
 import "gorm.io/gorm"
 
 type User struct {
-	gorm.Model
+	Model
 	Username string      `gorm:"unique;not null;size:64" json:"username"`
 	Email    string      `gorm:"unique;not null;size:128;uniqueIndex" json:"email"`
 	Role     int         `gorm:"not null" json:"role"`

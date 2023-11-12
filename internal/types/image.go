@@ -1,9 +1,7 @@
 package types
 
-import "gorm.io/gorm"
-
 type Image struct {
-	gorm.Model
+	Model
 	Url         string `gorm:"not null;size:1024" json:"url"`
 	GalleryId   uint   `gorm:"index;not null" json:"gallery_id"`
 	Camera      string `gorm:"not null;size:64" json:"camera"`
