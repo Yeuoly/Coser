@@ -107,24 +107,7 @@
                     <NGrid cols="1" style="max-height: 80vh; overflow-x: hidden; overflow-y: auto;" y-gap="12">
                         <NGi v-for="image in gallery.images">
                             <div>
-                                <NTag v-if="image.camera" type="primary" :bordered="false" size="small">
-                                    <template #icon>
-                                        <NIcon :component="Camera"></NIcon>
-                                    </template>
-                                    {{ image.camera }}
-                                </NTag>
-                                <NTag v-if="image.lens" type="primary" :bordered="false" size="small">
-                                    <template #icon>
-                                        <NIcon :component="Telescope"></NIcon>
-                                    </template>
-                                    {{ image.lens }}
-                                </NTag>
-                                <NTag v-if="image.focal_length" type="primary" :bordered="false" size="small">
-                                    <template #icon>
-                                        <NIcon :component="Eye"></NIcon>
-                                    </template>
-                                    焦距{{ image.focal_length }}
-                                </NTag>
+                                <CameraEditor v-bind:camera="image.exif"></CameraEditor>
                                 <NTag type="error" :bordered="false" size="small" class="clickable"
                                     @click="removeImage(image)">
                                     <template #icon>
@@ -132,12 +115,21 @@
                                     </template>
                                     删除
                                 </NTag>
+                                <NTag type="primary" :bordered="false" size="small" class="clickable"
+                                    @click="updateImage(image)">
+                                    >
+                                    <template #icon>
+                                        <NIcon :component="Save"></NIcon>
+                                    </template>
+                                    保存更改
+                                </NTag>
                             </div>
                             <div class="w100">
-                                <NImage :width="imageWidth" :height="300"
-                                    :src="image.url + '?x-oss-process=image/resize,mfit,h_400,w_800'" object-fit="cover"
+                                <NImage lazy :width="imageWidth" :height="300"
+                                    :src="image.url + '?x-oss-process=image/resize,mfit,h_800,w_1600'" object-fit="contain"
                                     alt="加载失败"></NImage>
                             </div>
+                            <NDivider></NDivider>
                         </NGi>
                     </NGrid>
                 </NGi>
@@ -149,14 +141,15 @@
 <script setup lang="ts">
 import { PropType, VNodeChild, h, onMounted, ref, watch } from 'vue'
 import { Gallery, GalleryTag, Image, Place } from '../interface/types'
-import { DialogApi, NAutoComplete, NButton, NGi, NGrid, NH3, NH6, NIcon, NImage, NInput, NInputGroup, NResult, NTag, NText, NUpload, NUploadDragger, SelectOption, UploadCustomRequestOptions } from 'naive-ui'
-import { apiCreateGallery, apiGalleryUploadImage, apiGalleryRemoveImage, apiUpdateGallery } from '../interface/cos'
+import { DialogApi, NAutoComplete, NButton, NDivider, NGi, NGrid, NH3, NH6, NIcon, NImage, NInput, NInputGroup, NResult, NTag, NText, NUpload, NUploadDragger, SelectOption, UploadCustomRequestOptions } from 'naive-ui'
+import { apiCreateGallery, apiGalleryUploadImage, apiGalleryRemoveImage, apiUpdateGallery, apiGalleryUpdateImage } from '../interface/cos'
 import { getBrowserKey } from '../store/key'
-import { Camera, Eye, Image as ImageIcon, Telescope, Trash } from '@vicons/ionicons5'
+import { Camera, Eye, Image as ImageIcon, Save, Telescope, Trash } from '@vicons/ionicons5'
 import { getExif } from '../utils/camera'
 import { FileInfo } from 'naive-ui/es/upload/src/interface'
 import { getDefaultCoser, getDefaultPhotographer, setDefaultCoser, setDefaultPhotographer } from '../store/role'
 import { apiCreateTag, apiSearchTag } from '../interface/cos'
+import CameraEditor from '../components/CameraEditor.vue'
 
 const imageWidth = ref(0)
 const galleryRef = ref<HTMLDivElement | null>(null)
@@ -209,6 +202,21 @@ const gallery = ref<Gallery>({
     images: [],
     key: '',
 })
+watch(props.gallery, () => {
+    props.gallery.images?.forEach((image, k) => {
+        if (!image.exif) {
+            console.log(image)
+            props.gallery.images[k].exif = {
+                camera: image.camera,
+                lens: image.lens,
+                focal: parseInt(image.focal_length),
+                apertureValue: parseFloat(image.aperature),
+                exposureTime: parseInt(image.exposure_time),
+                iso: parseInt(image.iso),
+            }
+        }
+    })
+}, { immediate: true, deep: true })
 
 const creating = ref(false)
 const createGallery = async () => {
@@ -329,7 +337,8 @@ const uploadImage = async ({
     }, 100)
 
     const response = await apiGalleryUploadImage(
-        gallery.value.ID, file.name, getBrowserKey(), file.type || '', exif.camera, exif.lens, exif.focal,
+        gallery.value.ID, file.name, getBrowserKey(), file.type || '',
+        exif.camera, exif.lens, exif.focal.toString(), exif.apertureValue.toString(), exif.exposureTime.toString(), exif.iso.toString(),
         file.file as File
     )
     clearInterval(timer)
@@ -352,7 +361,11 @@ const uploadImage = async ({
         url: response.data?.url || '',
         camera: exif.camera,
         lens: exif.lens,
-        focal_length: exif.focal,
+        focal_length: exif.focal.toString(),
+        aperature: exif.apertureValue.toString(),
+        exposure_time: exif.exposureTime.toString(),
+        iso: exif.iso.toString(),
+        exif: exif,
     })
 
     emits('updated', gallery.value)
@@ -411,6 +424,35 @@ const removeImage = async (image: Image) => {
     }
 
     gallery.value.images = gallery.value.images.filter(item => item.ID !== image.ID)
+    emits('updated', gallery.value)
+}
+
+const updateImage = async (image: Image) => {
+    const response = await apiGalleryUpdateImage(
+        gallery.value.ID, image.ID, getBrowserKey(),
+        image.exif.camera, image.exif.lens, 
+        image.exif.focal.toString(), image.exif.apertureValue.toString(), 
+        image.exif.exposureTime.toString(), image.exif.iso.toString(),
+    )
+    if (!response.isSuccess()) {
+        // @ts-ignore
+        window.$message.error(response.message)
+        return
+    }
+
+    gallery.value.images.forEach((item, k) => {
+        if (item.ID === image.ID) {
+            gallery.value.images[k].camera = image.exif.camera
+            gallery.value.images[k].lens = image.exif.lens
+            gallery.value.images[k].focal_length = image.exif.focal.toString()
+            gallery.value.images[k].aperature = image.exif.apertureValue.toString()
+            gallery.value.images[k].exposure_time = image.exif.exposureTime.toString()
+        }
+    })
+
+    // @ts-ignore
+    window.$message.success('更新成功')
+
     emits('updated', gallery.value)
 }
 

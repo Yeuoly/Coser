@@ -77,17 +77,47 @@ func HandleGalleryList(c *gin.Context) {
 // upload images
 func HandleGalleryUploadImage(c *gin.Context) {
 	type request struct {
-		GalleryID   uint   `json:"gallery_id" binding:"required"`
-		Filename    string `json:"filename" binding:"required"`
-		Key         string `json:"key" binding:"required"`
-		ContenType  string `json:"content_type" binding:"required"`
-		Camera      string `json:"camera" binding:"max=64"`
-		Lens        string `json:"lens" binding:"max=64"`
-		FocalLength string `json:"focal_length" binding:"max=64"`
+		GalleryID      uint   `json:"gallery_id" binding:"required"`
+		Filename       string `json:"filename" binding:"required"`
+		Key            string `json:"key" binding:"required"`
+		ContenType     string `json:"content_type" binding:"required"`
+		Camera         string `json:"camera" binding:"max=64"`
+		Lens           string `json:"lens" binding:"max=64"`
+		AperatureValue string `json:"aperture_value" binding:"max=64"`
+		ExposureTime   string `json:"exposure_time" binding:"max=64"`
+		ISO            string `json:"iso" binding:"max=64"`
+		FocalLength    string `json:"focal_length" binding:"max=64"`
 	}
 
 	controller.BindRequest(c, func(r request) {
-		c.JSON(200, http_service.UploadGallery(r.GalleryID, r.Filename, r.ContenType, r.Camera, r.Lens, r.FocalLength, c.ClientIP()))
+		c.JSON(200, http_service.UploadGallery(
+			r.GalleryID, r.Filename, r.ContenType,
+			r.Camera, r.Lens, r.FocalLength, r.AperatureValue, r.ExposureTime, r.ISO,
+			c.ClientIP(),
+		))
+	})
+}
+
+// update image info
+func HandleGalleryUpdateImage(c *gin.Context) {
+	type request struct {
+		GalleryID    uint   `json:"gallery_id" binding:"required"`
+		ID           uint   `json:"id" binding:"required"`
+		Camera       string `json:"camera" binding:"max=64"`
+		Lens         string `json:"lens" binding:"max=64"`
+		Aperature    string `json:"aperture_value" binding:"max=64"`
+		ExposureTime string `json:"exposure_time" binding:"max=64"`
+		ISO          string `json:"iso" binding:"max=64"`
+		FocalLength  string `json:"focal_length" binding:"max=64"`
+		Key          string `json:"key" binding:"required"`
+	}
+
+	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.UpdateGalleryImage(
+			r.ID, r.GalleryID,
+			r.Camera, r.Lens, r.FocalLength, r.Aperature, r.ExposureTime, r.ISO,
+			r.Key,
+		))
 	})
 }
 

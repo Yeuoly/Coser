@@ -201,7 +201,20 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 		return types.ErrorResponse(-500, "internal error")
 	}
 
-	// 3. merge
+	// 3. place
+	places, err := db.GetAll[types.Place](
+		db.Like("name", keyword),
+		db.Page(1, 10),
+		db.Preload("Galleries"),
+		db.Preload("Galleries.Images"),
+		db.Preload("Galleries.Tags"),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	// 4. merge
 	result := make(map[uint]types.Gallery)
 
 	for _, gallery := range galleries {
@@ -214,7 +227,13 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 		}
 	}
 
-	// 4. convert to array
+	for _, place := range places {
+		for _, gallery := range place.Galleries {
+			result[gallery.ID] = gallery
+		}
+	}
+
+	// 5. convert to array
 	galleries = make([]types.Gallery, 0, len(result))
 	for _, gallery := range result {
 		gallery.ClearSensitive()
@@ -226,7 +245,11 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 	})
 }
 
-func UploadGallery(galleryID uint, filename string, contentType string, camera string, lens string, focalLength string, ip string) *types.CoshubResponse {
+func UploadGallery(
+	galleryID uint, filename string, contentType string,
+	camera string, lens string, focalLength string, aperature string, exposureTime string, iso string,
+	ip string,
+) *types.CoshubResponse {
 	type response struct {
 		Url string `json:"url"`
 		Id  uint   `json:"id"`
@@ -258,12 +281,15 @@ func UploadGallery(galleryID uint, filename string, contentType string, camera s
 
 	storage_url := strings.Split(url, "?")[0]
 	image := &types.Image{
-		Url:         storage_url,
-		GalleryId:   gallery.ID,
-		Camera:      camera,
-		Lens:        lens,
-		FocalLength: focalLength,
-		Ip:          ip,
+		Url:          storage_url,
+		GalleryId:    gallery.ID,
+		Camera:       camera,
+		Lens:         lens,
+		FocalLength:  focalLength,
+		Aperature:    aperature,
+		ExposureTime: exposureTime,
+		ISO:          iso,
+		Ip:           ip,
 	}
 
 	err = db.Create(image)
@@ -274,6 +300,54 @@ func UploadGallery(galleryID uint, filename string, contentType string, camera s
 	return types.SuccessResponse(response{
 		Url: url,
 		Id:  image.ID,
+	})
+}
+
+func UpdateGalleryImage(
+	id uint, galleryID uint,
+	camera string, lens string, focalLength string, aperature string, exposureTime string, iso string,
+	key string,
+) *types.CoshubResponse {
+	type response struct {
+		Success bool `json:"success"`
+	}
+
+	image, err := db.GetOne[types.Image](
+		db.Equal("id", id),
+		db.Equal("gallery_id", galleryID),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	gallery, err := db.GetOne[types.Gallery](
+		db.Equal("id", galleryID),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	if gallery.Key != key {
+		return types.ErrorResponse(-403, "key错误")
+	}
+
+	image.Camera = camera
+	image.Lens = lens
+	image.FocalLength = focalLength
+	image.Aperature = aperature
+	image.ExposureTime = exposureTime
+	image.ISO = iso
+
+	err = db.Update(image)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	return types.SuccessResponse(response{
+		Success: true,
 	})
 }
 
@@ -292,6 +366,7 @@ func DeleteGalleryImage(galleryID uint, id uint, key string) *types.CoshubRespon
 
 	image, err := db.GetOne[types.Image](
 		db.Equal("id", id),
+		db.Equal("gallery_id", galleryID),
 	)
 
 	if err != nil {

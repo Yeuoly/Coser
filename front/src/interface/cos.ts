@@ -90,7 +90,8 @@ export const apiGallerySearch = (keyword: string) => apiBase<{
 })
 
 export const apiGalleryUploadImage = (
-    gallery_id: number, filename: string, key: string, content_type: string, camera: string, lens: string, focal_length: string,
+    gallery_id: number, filename: string, key: string, content_type: string,
+    camera: string, lens: string, focal_length: string, aperture_value: string, exposure_time: string, iso: string,
     file: File
 ) => {
     return new Promise<Response<{
@@ -101,7 +102,7 @@ export const apiGalleryUploadImage = (
             url: string,
             id: number
         }>('/v1/gallery/upload', RequestMethods.POST, {
-            gallery_id, filename, key, content_type, camera, lens, focal_length
+            gallery_id, filename, key, content_type, camera, lens, focal_length, aperture_value, exposure_time, iso
         })
 
         if (!response.isSuccess()) {
@@ -161,4 +162,13 @@ export const apiGalleryRemoveImage = (gallery_id: number, id: number, key: strin
     success: boolean
 }>('/v1/gallery/image/remove', RequestMethods.POST, {
     id, key, gallery_id
+})
+
+export const apiGalleryUpdateImage = (
+    gallery_id: number, id: number, key: string, 
+    camera: string, lens: string, focal_length: string, aperture_value: string, exposure_time: string, iso: string
+) => apiBase<{
+    success: boolean
+}>('/v1/gallery/image/update', RequestMethods.POST, {
+    id, key, gallery_id, camera, lens, focal_length, aperture_value, exposure_time, iso
 })

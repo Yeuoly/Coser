@@ -1,12 +1,13 @@
 // @ts-ignore
 import piexif from 'piexifjs'
 
-type EXIF = {
+export type EXIF = {
     camera: string
     lens: string
-    focal: string
-    apertureValue: string
-    exposureTime: string
+    focal: number
+    apertureValue: number
+    exposureTime: number
+    iso: number
 }
 
 export const getExif = (file: File) => new Promise<EXIF>((resolve) => {
@@ -24,6 +25,7 @@ export const getExif = (file: File) => new Promise<EXIF>((resolve) => {
             const _apertureValue = exifObj['Exif'][piexif.ExifIFD.ApertureValue]
             const _maxApertureValue = exifObj['Exif'][piexif.ExifIFD.MaxApertureValue]
             const _exposureTime = exifObj['Exif'][piexif.ExifIFD.ExposureTime]
+            const _iso = exifObj['Exif'][piexif.ExifIFD.ISOSpeedRatings]
 
             let camera = ''
             if (_camera) {
@@ -39,19 +41,25 @@ export const getExif = (file: File) => new Promise<EXIF>((resolve) => {
                 lens = _lens.replaceAll('\x00', '').replaceAll('\u0000', '')
             }
 
-            let focal = ''
+            let focal = 0
             if (_focal) {
-                focal = '' + _focal[0] / _focal[1]
+                focal = _focal[0] / _focal[1]
             }
 
-            let apertureValue = ''
+            let apertureValue = 0
             if (_apertureValue) {
-                apertureValue = '' + Math.pow(2, _apertureValue[0] / _apertureValue[1] / 2).toFixed(1)
+                apertureValue = Math.pow(2, _apertureValue[0] / _apertureValue[1] / 2)
+                apertureValue = Math.round(apertureValue * 10) / 10
             }
 
-            let exposureTime = ''
+            let exposureTime = 0
             if (_exposureTime) {
-                exposureTime = '' + `${_exposureTime[0]}/${_exposureTime[1]}`
+                exposureTime = _exposureTime[1] / _exposureTime[0]
+            }
+
+            let iso = 0
+            if (_iso) {
+                iso = _iso
             }
 
             resolve({
@@ -59,15 +67,17 @@ export const getExif = (file: File) => new Promise<EXIF>((resolve) => {
                 lens,
                 focal,
                 apertureValue,
-                exposureTime
+                exposureTime,
+                iso
             })
         } catch (e) {
             resolve({
                 camera: '',
                 lens: '',
-                focal: '',
-                apertureValue: '',
-                exposureTime: ''
+                focal: 0,
+                apertureValue: 0,
+                exposureTime: 0,
+                iso: 0
             })
         }
     }

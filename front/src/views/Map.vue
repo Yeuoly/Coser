@@ -148,7 +148,7 @@
                             </NButtonGroup>
                         </template>
                         <NImage style="border-radius: 12px;" width="450" object-fit="contain" height="300"
-                            :src="(gallery.images && gallery.images.length > 0) ? gallery.images[0].url + '?x-oss-process=image/resize,mfit,h_400,w_800' : ''">
+                            :src="(gallery.images && gallery.images.length > 0) ? gallery.images[0].url + '?x-oss-process=image/resize,mfit,h_800,w_1600' : ''">
                         </NImage>
                         <NDivider></NDivider>
                     </NThing>

@@ -41,6 +41,8 @@ type Image struct {
 
  */
 
+import { EXIF } from "../utils/camera";
+
 export type Image = {
     ID: number;
     CreatedAt: string;
@@ -51,6 +53,10 @@ export type Image = {
     lens: string;
     focal_length: string;
     gallery_id: number;
+    exif: EXIF;
+    aperature: string;
+    exposure_time: string;
+    iso: string;
 }
 
 export type GalleryTag = {
