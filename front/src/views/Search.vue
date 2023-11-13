@@ -22,7 +22,7 @@
                                 {{ gallery.name }}
                             </template>
                             <template #header-extra>
-                                <NButton type="primary">仔细康康</NButton>
+                                <NButton type="primary" @click="toDetail(gallery)">仔细康康</NButton>
                             </template>
                             <template #avatar v-if="gallery.images && gallery.images.length > 0">
                                 <NImage style="border-radius: 12px;" :src="gallery.images[0].url" height="200" width="200" object-fit="cover"></NImage>
@@ -49,6 +49,12 @@
                                     </template>
                                     角色{{ gallery.character }}
                                 </NTag>
+                                <NTag v-if="gallery.place.name" class="clickable" type="warning" :bordered="false" @click="toPlace(gallery)">
+                                    <template #icon>
+                                        <NIcon :component="Locate"></NIcon>
+                                    </template>
+                                    {{ gallery.place.name }}
+                                </NTag>
                                 <NTag type="info" :bordered="false">
                                     <template #icon>
                                         <NIcon :component="List"></NIcon>
@@ -69,9 +75,11 @@ import { NButton, NCard, NEmpty, NIcon, NImage, NInput, NInputGroup, NSpin, NTag
 import { onMounted, ref } from 'vue'
 import { Gallery } from '../interface/types'
 import { apiGallerySearch } from '../interface/cos'
-import { Camera, List, Man } from '@vicons/ionicons5';
+import { Camera, List, Locate, Man } from '@vicons/ionicons5'
+import { useRouter } from 'vue-router'
 
 const message = useMessage()
+const router = useRouter()
 
 const input = ref<HTMLElement | null>(null)
 const keyword = ref('')
@@ -94,6 +102,14 @@ const search = async () => {
 
         galleries.value = response.data?.galleries || []
     }
+}
+
+const toDetail = (gallery: Gallery) => {
+    router.push(`/detail/${gallery.ID}`)
+}
+
+const toPlace = (gallery: Gallery) => {
+    router.push(`/map?lat=${gallery.place.point.y}&lng=${gallery.place.point.x}`)
 }
 </script>
 

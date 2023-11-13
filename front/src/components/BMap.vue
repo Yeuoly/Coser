@@ -27,13 +27,13 @@
             <template v-if="enableMarkerRender">
                 <BInfoWindow
                     show
-                    v-for="(point, index) in multiPoints" :key="index"
+                    v-for="(point, index) in multiPointsRender" :key="index"
                     :position="{ lat: point.lat, lng: point.lng }"
                     :title="point.title"
                 ></BInfoWindow>
             </template>
             <template v-else>
-                <BMarker v-for="(point, index) in multiPoints" :key="index"
+                <BMarker v-for="(point, index) in multiPointsRender" :key="index"
                     :position="{ lat: point.lat, lng: point.lng }"
                     :visible="true"
                     :icon="point.ico ? {
@@ -43,7 +43,7 @@
                             height: 100,
                         },
                     } : 'simple_red'"
-                    @click="point.click && point.click()"
+                    @click="point.click()"
                 />
             </template>
         </template>
@@ -115,6 +115,8 @@ import {
     MapType,
     BLocation,
     BInfoWindow,
+usePointGeocoder,
+PointGeocoderResult,
 } from 'vue3-baidu-map-gl'
 
 const message = useMessage()
@@ -126,8 +128,17 @@ const BMapGL = ref()
 
 const handleInitd = (e: any) => {
     BMapGL.value = e.BMapGL
-    get()
+    if (settingProps.center.lng == 0 || settingProps.center.lat == 0) {
+        get()
+    } else {
+        handleLocate({
+            lng: settingProps.center.lng,
+            lat: settingProps.center.lat,
+        })
+    }
 }
+
+const { get: geocoderGet, result: geoResult, isLoading: geoLoading } = usePointGeocoder<PointGeocoderResult>()
 
 const { get, location } = useBrowserLocation({
     enableHighAccuracy: true,
@@ -140,7 +151,7 @@ const { get, location } = useBrowserLocation({
 const emitEvents = defineEmits<{
     (event: 'onLocate', position: { lng: number, lat: number }): void
     (event: 'onSearch', position: { lng: number, lat: number }): void
-    (event: 'onClick', position: { lng: number, lat: number }): void
+    (event: 'onClick', position: { lng: number, lat: number, name: string }): void
 }>()
 const handleLocate = async (position: { lng: number, lat: number }) => {
     const mapInstance = map.value.getMapInstance()
@@ -280,9 +291,22 @@ const settingProps = defineProps({
         type: Boolean,
         default: false,
     },
+    enableGeoDecoder: {
+        type: Boolean,
+        default: true,
+    },
     searchOnEdit: {
         type: Boolean,
         default: false,
+    },
+    center: {
+        type: Object as PropType<{ lng: number, lat: number }>,
+        default: () => {
+            return {
+                lng: 0,
+                lat: 0,
+            }
+        },
     },
 })
 
@@ -330,13 +354,51 @@ watch(location, () => {
     }
 }, { deep: true })
 
-const handleMapClick = ({
+const isClickMarker = ref<boolean>(false)
+const multiPointsRender = computed(() => {
+    return multiPoints.value.map((point) => {
+        return {
+            ...point,
+            click () {
+                isClickMarker.value = true
+                setTimeout(() => {
+                    isClickMarker.value = false
+                }, 100)
+
+                point.click && point.click()
+            }
+        }
+    })
+})
+
+const handleMapClick = async ({
     target, latlng
 }: {
     target: HTMLDivElement,
     latlng: { lat: number, lng: number },
 }) => {
-    emitEvents('onClick', latlng)
+    if (isClickMarker.value) {
+        return
+    }
+
+
+    let name = ''
+    if (settingProps.enableGeoDecoder) {
+        geocoderGet(latlng)
+        for (let i = 0; i < 30; i++) {
+            if (!geoLoading.value) {
+                name = (geoResult.value?.address || '') + (geoResult.value?.surroundingPois[0]?.title || '')
+                break
+            }
+            await new Promise((resolve) => setTimeout(() => resolve(null) , 100))
+        }
+    }
+    
+    emitEvents('onClick', {
+        lng: latlng.lng,
+        lat: latlng.lat,
+        name: name,
+    })
 
     if(!isFullScreen.value) {
         return

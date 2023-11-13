@@ -57,6 +57,8 @@ export type Image = {
     aperature: string;
     exposure_time: string;
     iso: string;
+    width: number,
+    height: number,
 }
 
 export type GalleryTag = {

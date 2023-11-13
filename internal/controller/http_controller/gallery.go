@@ -87,12 +87,15 @@ func HandleGalleryUploadImage(c *gin.Context) {
 		ExposureTime   string `json:"exposure_time" binding:"max=64"`
 		ISO            string `json:"iso" binding:"max=64"`
 		FocalLength    string `json:"focal_length" binding:"max=64"`
+		Width          uint   `json:"width" binding:""`
+		Height         uint   `json:"height" binding:""`
 	}
 
 	controller.BindRequest(c, func(r request) {
 		c.JSON(200, http_service.UploadGallery(
 			r.GalleryID, r.Filename, r.ContenType,
 			r.Camera, r.Lens, r.FocalLength, r.AperatureValue, r.ExposureTime, r.ISO,
+			r.Width, r.Height,
 			c.ClientIP(),
 		))
 	})

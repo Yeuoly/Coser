@@ -160,11 +160,14 @@ func GetGalleryInfo(id uint) *types.CoshubResponse {
 		db.Equal("id", id),
 		db.Preload("Images"),
 		db.Preload("Tags"),
+		db.Preload("Place"),
 	)
 
 	if err != nil {
 		return types.ErrorResponse(-500, "internal error")
 	}
+
+	gallery.ClearSensitive()
 
 	return types.SuccessResponse(response{
 		Gallery: gallery,
@@ -182,6 +185,7 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 		db.Page(1, 10),
 		db.Preload("Images"),
 		db.Preload("Tags"),
+		db.Preload("Place"),
 	)
 
 	if err != nil {
@@ -195,6 +199,7 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 		db.Preload("Galleries"),
 		db.Preload("Galleries.Images"),
 		db.Preload("Galleries.Tags"),
+		db.Preload("Galleries.Place"),
 	)
 
 	if err != nil {
@@ -208,6 +213,7 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 		db.Preload("Galleries"),
 		db.Preload("Galleries.Images"),
 		db.Preload("Galleries.Tags"),
+		db.Preload("Galleries.Place"),
 	)
 
 	if err != nil {
@@ -248,6 +254,7 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 func UploadGallery(
 	galleryID uint, filename string, contentType string,
 	camera string, lens string, focalLength string, aperature string, exposureTime string, iso string,
+	width uint, height uint,
 	ip string,
 ) *types.CoshubResponse {
 	type response struct {
@@ -289,6 +296,8 @@ func UploadGallery(
 		Aperature:    aperature,
 		ExposureTime: exposureTime,
 		ISO:          iso,
+		Width:        width,
+		Height:       height,
 		Ip:           ip,
 	}
 

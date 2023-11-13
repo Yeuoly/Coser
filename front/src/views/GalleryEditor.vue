@@ -221,6 +221,8 @@ watch(props.gallery, () => {
                 apertureValue: parseFloat(image.aperature),
                 exposureTime: parseInt(image.exposure_time),
                 iso: parseInt(image.iso),
+                width: image.width,
+                height: image.height,
             }
         }
     })
@@ -358,6 +360,7 @@ const uploadImage = async ({
     const response = await apiGalleryUploadImage(
         gallery.value.ID, file.name, getBrowserKey(), file.type || '',
         exif.camera, exif.lens, exif.focal.toString(), exif.apertureValue.toString(), exif.exposureTime.toString(), exif.iso.toString(),
+        exif.width, exif.height,
         file.file as File
     )
     clearInterval(timer)
@@ -385,6 +388,8 @@ const uploadImage = async ({
         exposure_time: exif.exposureTime.toString(),
         iso: exif.iso.toString(),
         exif: exif,
+        width: exif.width,
+        height: exif.height,
     })
 
     emits('updated', gallery.value)

@@ -2,8 +2,8 @@
 <template>
     <div class="c-v-map">
         <div class="map-container">
-            <BMap @onClick="handleMapClick" @onLocate="handleMapLocate" :points="points" :enable-modify="false"
-                :enable-add-center-marker="false" enable-search mode="multi"></BMap>
+            <BMap :center="center" @onClick="handleMapClick" @onLocate="handleMapLocate" :points="points"
+                :enable-modify="false" :enable-add-center-marker="false" enable-search mode="multi"></BMap>
         </div>
     </div>
     <NDrawer v-model:show="showPlace" :width="500">
@@ -52,8 +52,9 @@
                         封面预览
                     </div>
                     <div class="w100" style="height: 300px;">
-                        <NImage style="border-radius: 12px;" :src="newPlaceForm.avatar" object-fit="cover" height="300"
-                            width="450"></NImage>
+                        <NImage style="border-radius: 12px;"
+                            :src="newPlaceForm.avatar + '?x-oss-process=image/resize,mfit,h_800,w_1600'" object-fit="cover"
+                            height="300" width="450"></NImage>
                     </div>
                 </NH6>
                 <NH6 prefix="bar" class="w100">
@@ -67,7 +68,8 @@
                             {{ currentPlace.name }}
                         </NText>
                     </template>
-                    <img :src="currentPlace.avatar" style="width: 100%; height: 300px; object-fit: contain;" />
+                    <NImage :src="currentPlace.avatar + '?x-oss-process=image/resize,mfit,h_800,w_1600'" width="450"
+                        height="300" object-fit="contain" />
                     <template #footer>
                         <div class="text-13">
                             {{ currentPlace.description }}
@@ -120,31 +122,42 @@
                         </template>
                         <template #header-extra>
                             <NButtonGroup>
-                                <NButton size="small" type="info">
+                                <NButton size="small" type="info" @click="toDetail(gallery)">
                                     让我康康！
                                 </NButton>
-                                <NTooltip trigger="hover">
+                                <NPopover trigger="hover" style="margin: 0; padding: 0;">
                                     <template #trigger>
-                                        <NButton size="small" type="primary" @click="updateGallery(gallery)">
+                                        <NButton size="small" type="info">
                                             <template #icon>
-                                                <NIcon :component="CreateOutline"></NIcon>
+                                                <NIcon :component="Menu"></NIcon>
                                             </template>
-                                            编辑
                                         </NButton>
                                     </template>
-                                    只有您创建的才可以编辑哦
-                                </NTooltip>
-                                <NTooltip trigger="hover">
-                                    <template #trigger>
-                                        <NButton size="small" type="error" @click="deleteGallery(gallery)">
-                                            <template #icon>
-                                                <NIcon :component="Trash"></NIcon>
+                                    <div>
+                                        <NTooltip trigger="hover">
+                                            <template #trigger>
+                                                <NButton size="small" type="primary" @click="updateGallery(gallery)">
+                                                    <template #icon>
+                                                        <NIcon :component="CreateOutline"></NIcon>
+                                                    </template>
+                                                    编辑
+                                                </NButton>
                                             </template>
-                                            删除
-                                        </NButton>
-                                    </template>
-                                    只有您创建的才可以删除哦
-                                </NTooltip>
+                                            只有您创建的才可以编辑哦
+                                        </NTooltip>
+                                        <NTooltip trigger="hover">
+                                            <template #trigger>
+                                                <NButton size="small" type="error" @click="deleteGallery(gallery)">
+                                                    <template #icon>
+                                                        <NIcon :component="Trash"></NIcon>
+                                                    </template>
+                                                    删除
+                                                </NButton>
+                                            </template>
+                                            只有您创建的才可以删除哦
+                                        </NTooltip>
+                                    </div>
+                                </NPopover>
                             </NButtonGroup>
                         </template>
                         <NImage style="border-radius: 12px;" width="450" object-fit="contain" height="300"
@@ -175,9 +188,18 @@ import { CreateOutline, Image, Menu, Trash, TrashBinOutline } from '@vicons/ioni
 import { apiCreatePlace, apiPlaceInfo, apiPlaceNearby, apiGalleryDelete, apiDeletPlace, apiUpdatePlace } from '../interface/cos'
 import { getBrowserKey } from '../store/key'
 import GalleryEditor from './GalleryEditor.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { usePointGeocoder, PointGeocoderResult } from 'vue3-baidu-map-gl'
 
+const route = useRoute()
+const router = useRouter()
 const dialog = useDialog()
 const message = useMessage()
+
+const center = ref({
+    lat: parseFloat(route.query.lat as string) || 0,
+    lng: parseFloat(route.query.lng as string) || 0
+})
 
 const showPlace = ref<boolean>(false)
 const currentPlace = ref<Place | null>(null)
@@ -337,8 +359,8 @@ const updatePlace = () => {
         onPositiveClick: async () => {
             currentPlace.value!.avatar = newPlaceForm.value.avatar
             const response = await apiUpdatePlace(
-                currentPlace.value!.ID, currentPlace.value!.name, currentPlace.value!.description, 
-                currentPlace.value?.point.y || 0, currentPlace.value?.point.x || 0, 
+                currentPlace.value!.ID, currentPlace.value!.name, currentPlace.value!.description,
+                currentPlace.value?.point.y || 0, currentPlace.value?.point.x || 0,
                 getBrowserKey(), newPlaceForm.value.avatar
             )
 
@@ -387,13 +409,11 @@ const fetchNearbyPlaces = async (lat: number, lng: number) => {
 
 const places = ref<Place[]>([])
 
-const isClickPlace = ref<boolean>(false)
 const points = computed(() => places.value.map((v, k) => {
     return {
         lng: v.point.x,
         lat: v.point.y,
         click: () => {
-            isClickPlace.value = true
             showPlace.value = true
             setTimeout(async () => {
                 currentPlace.value = v
@@ -407,21 +427,19 @@ const points = computed(() => places.value.map((v, k) => {
                         currentPlace.value = places.value[k]
                     }
                 }
-                isClickPlace.value = false
             }, 100)
         },
     }
 }))
 
 const handleMapClick = (e: {
-    lng: number, lat: number
+    lng: number, lat: number, name: string
 }) => {
-    if (isClickPlace.value) {
-        isClickPlace.value = false
-        return
-    }
     newPlaceForm.value.lat = e.lat
     newPlaceForm.value.lng = e.lng
+    newPlaceForm.value.name = e.name
+    newPlaceForm.value.description = e.name
+
     currentPlace.value = null
     showPlace.value = true
 }
@@ -491,6 +509,10 @@ const deleteGallery = async (gallery: Gallery) => {
             currentPlace.value?.galleries?.splice(index, 1)
         }
     }
+}
+
+const toDetail = (gallery: Gallery) => {
+    router.push(`/detail/${gallery.ID}`)
 }
 
 </script>

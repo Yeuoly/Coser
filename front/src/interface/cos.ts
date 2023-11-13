@@ -78,7 +78,7 @@ export const apiUpdateGallery = (
 })
 
 export const apiGalleryInfo = (id: number) => apiBase<{
-        
+    gallery: Gallery
 }>('/v1/gallery/info', RequestMethods.GET, {
     id
 })
@@ -92,6 +92,7 @@ export const apiGallerySearch = (keyword: string) => apiBase<{
 export const apiGalleryUploadImage = (
     gallery_id: number, filename: string, key: string, content_type: string,
     camera: string, lens: string, focal_length: string, aperture_value: string, exposure_time: string, iso: string,
+    width: number, height: number,
     file: File
 ) => {
     return new Promise<Response<{
@@ -102,7 +103,8 @@ export const apiGalleryUploadImage = (
             url: string,
             id: number
         }>('/v1/gallery/upload', RequestMethods.POST, {
-            gallery_id, filename, key, content_type, camera, lens, focal_length, aperture_value, exposure_time, iso
+            gallery_id, filename, key, content_type, camera, lens, focal_length, aperture_value, exposure_time, iso,
+            width, height
         })
 
         if (!response.isSuccess()) {

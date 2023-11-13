@@ -8,12 +8,36 @@ export type EXIF = {
     apertureValue: number
     exposureTime: number
     iso: number
+    width: number
+    height: number
 }
 
 export const getExif = (file: File) => new Promise<EXIF>((resolve) => {
     const reader = new FileReader()
     reader.readAsDataURL(file as File)
-    reader.onload = function (e) {
+    reader.onload = async function (e) {
+        let width = 0
+        let height = 0
+        let finish = false
+
+        const image = new Image()
+        image.onload = function () {
+            width = image.width
+            height = image.height
+            finish = true
+        }
+        image.onerror = function () {
+            finish = true
+        }
+        image.onabort = function () {
+            finish = true
+        }
+        image.src = e.target?.result as string
+
+        while (!finish) {
+            await new Promise((resolve) => setTimeout(resolve, 100))
+        }
+
         // read exif
         const imageData = e.target?.result
         try {
@@ -68,7 +92,9 @@ export const getExif = (file: File) => new Promise<EXIF>((resolve) => {
                 focal,
                 apertureValue,
                 exposureTime,
-                iso
+                iso,
+                width,
+                height
             })
         } catch (e) {
             resolve({
@@ -77,7 +103,9 @@ export const getExif = (file: File) => new Promise<EXIF>((resolve) => {
                 focal: 0,
                 apertureValue: 0,
                 exposureTime: 0,
-                iso: 0
+                iso: 0,
+                width,
+                height
             })
         }
     }

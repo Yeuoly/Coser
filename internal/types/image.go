@@ -10,6 +10,8 @@ type Image struct {
 	Aperature    string `gorm:"not null;size:64;default:''" json:"aperature"`
 	ExposureTime string `gorm:"not null;size:64;default:''" json:"exposure_time"`
 	ISO          string `gorm:"not null;size:64;default:''" json:"iso"`
+	Width        uint   `gorm:"not null;default:0" json:"width"`
+	Height       uint   `gorm:"not null;default:0" json:"height"`
 	Ip           string `gorm:"not null;size:64" json:"ip"` // ip address of the uploader, for logging
 }
 
