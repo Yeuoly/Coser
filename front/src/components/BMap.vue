@@ -23,6 +23,12 @@
         <template v-if="mode == 'single' && !disableMarker">
             <BMarker :position="{ lat: singlePoint.lat, lng: singlePoint.lng }" icon="simple_red" />
         </template>
+        <template v-if="selectedSearchPoint.lat != 0 && selectedSearchPoint.lng !=0">
+            <BMarker :position="selectedSearchPoint" icon="simple_blue" />
+        </template>
+        <template v-if="selectedClickPoint.lat != 0 && selectedClickPoint.lng !=0">
+            <BMarker :position="selectedClickPoint" icon="simple_blue" />
+        </template>
         <template v-if="mode == 'multi'">
             <template v-if="enableMarkerRender">
                 <BInfoWindow
@@ -151,7 +157,7 @@ const { get, location } = useBrowserLocation({
 const emitEvents = defineEmits<{
     (event: 'onLocate', position: { lng: number, lat: number }): void
     (event: 'onSearch', position: { lng: number, lat: number }): void
-    (event: 'onClick', position: { lng: number, lat: number, name: string }): void
+    (event: 'onClick', position: { lng: number, lat: number, name: string, close: () => void }): void
 }>()
 const handleLocate = async (position: { lng: number, lat: number }) => {
     const mapInstance = map.value.getMapInstance()
@@ -159,6 +165,7 @@ const handleLocate = async (position: { lng: number, lat: number }) => {
     emitEvents('onLocate', position)
 }
 const handleSearchLocate = (position: { lng: number, lat: number }) => {
+    selectedSearchPoint.value = position
     const mapInstance = map.value.getMapInstance()
     mapInstance.setCenter(position)
     emitEvents('onLocate', position)
@@ -195,6 +202,10 @@ const searchResult = ref<{
     point: { lng: number, lat: number },
     address: string,
 }[]>()
+const selectedSearchPoint = ref({
+    lng: 0,
+    lat: 0,
+})
 const showSearchComponent = computed(() => {
     if (!settingProps.enableSearch) {
         return false
@@ -371,6 +382,10 @@ const multiPointsRender = computed(() => {
     })
 })
 
+const selectedClickPoint = ref({
+    lng: 0,
+    lat: 0,
+})
 const handleMapClick = async ({
     target, latlng
 }: {
@@ -381,6 +396,7 @@ const handleMapClick = async ({
         return
     }
 
+    selectedClickPoint.value = latlng
 
     let name = ''
     if (settingProps.enableGeoDecoder) {
@@ -398,6 +414,12 @@ const handleMapClick = async ({
         lng: latlng.lng,
         lat: latlng.lat,
         name: name,
+        close: () => {
+            selectedClickPoint.value = {
+                lng: 0,
+                lat: 0,
+            }
+        }
     })
 
     if(!isFullScreen.value) {

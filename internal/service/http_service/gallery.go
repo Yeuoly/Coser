@@ -181,7 +181,7 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 
 	// 1. search name
 	galleries, err := db.GetAll[types.Gallery](
-		db.Like("name", keyword),
+		db.ILike("name", keyword),
 		db.Page(1, 10),
 		db.Preload("Images"),
 		db.Preload("Tags"),
@@ -194,7 +194,7 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 
 	// 2. search tags
 	tags, err := db.GetAll[types.Tag](
-		db.Like("name", keyword),
+		db.ILike("name", keyword),
 		db.Page(1, 10),
 		db.Preload("Galleries"),
 		db.Preload("Galleries.Images"),
@@ -208,7 +208,7 @@ func SearchGallery(keyword string) *types.CoshubResponse {
 
 	// 3. place
 	places, err := db.GetAll[types.Place](
-		db.Like("name", keyword),
+		db.ILike("name", keyword),
 		db.Page(1, 10),
 		db.Preload("Galleries"),
 		db.Preload("Galleries.Images"),

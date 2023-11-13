@@ -432,13 +432,15 @@ const points = computed(() => places.value.map((v, k) => {
     }
 }))
 
+let mapClickCloser: () => void
 const handleMapClick = (e: {
-    lng: number, lat: number, name: string
+    lng: number, lat: number, name: string, close: () => void
 }) => {
     newPlaceForm.value.lat = e.lat
     newPlaceForm.value.lng = e.lng
     newPlaceForm.value.name = e.name
     newPlaceForm.value.description = e.name
+    mapClickCloser = e.close
 
     currentPlace.value = null
     showPlace.value = true
@@ -466,6 +468,7 @@ const createGallery = () => {
                     currentPlace.value!.galleries = []
                 }
                 currentPlace.value?.galleries?.push(gallery)
+                mapClickCloser()
             },
             onUpdated: (gallery: Gallery) => {
                 const index = currentPlace.value?.galleries?.findIndex(v => v.ID === gallery.ID)

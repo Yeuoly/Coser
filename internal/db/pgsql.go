@@ -119,6 +119,12 @@ func Like(field string, value string) GenericQuery {
 	}
 }
 
+func ILike(field string, value string) GenericQuery {
+	return func(tx *gorm.DB) *gorm.DB {
+		return tx.Where(fmt.Sprintf("%s ILIKE ?", field), "%"+value+"%")
+	}
+}
+
 func Page(page int, pageSize int) GenericQuery {
 	return func(tx *gorm.DB) *gorm.DB {
 		return tx.Offset((page - 1) * pageSize).Limit(pageSize)

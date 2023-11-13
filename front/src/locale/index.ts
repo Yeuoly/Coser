@@ -1,5 +1,6 @@
 import { createI18n } from 'vue-i18n'
 
+// @ts-ignore
 const modules = import.meta.glob('../i18n/temp/*.json', { eager: true, import: 'default' }) as Record<string, { [key: string]: any }>
 
 /**
