@@ -157,6 +157,7 @@ import { FileInfo } from 'naive-ui/es/upload/src/interface'
 import { getDefaultCoser, getDefaultPhotographer, setDefaultCoser, setDefaultPhotographer } from '../store/role'
 import { apiCreateTag, apiSearchTag } from '../interface/cos'
 import CameraEditor from '../components/CameraEditor.vue'
+import { addCommonlyUsedCamera, addCommonlyUsedLens } from '../store/camera'
 
 const imageWidth = ref(0)
 const galleryRef = ref<HTMLDivElement | null>(null)
@@ -457,6 +458,13 @@ const updateImage = async (image: Image) => {
         window.$message.error(response.message)
         return
     }
+
+    // set commonly used cameras and lens
+    const camera = image.exif.camera
+    const lens = image.exif.lens
+
+    addCommonlyUsedCamera(camera)
+    addCommonlyUsedLens(lens)
 
     gallery.value.images.forEach((item, k) => {
         if (item.ID === image.ID) {

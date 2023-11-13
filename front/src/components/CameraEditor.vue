@@ -36,15 +36,32 @@
 import { NAutoComplete, NInput, NInputGroup, NInputNumber, NSelect } from 'naive-ui'
 
 import { EXIF, cameras, lens } from '../utils/camera'
+import { getCommonlyUsedCameras, getCommonlyUsedLens } from '../store/camera'
 import { computed } from 'vue'
 
 const cameraOptions = computed(() => {
+    // check if camera is in commonly used cameras
+    const commonlyUsedCameras = getCommonlyUsedCameras()
+    const cameraInCommonlyUsedCameras = commonlyUsedCameras.filter(
+        v => v.toLowerCase().includes(camera.value.camera.toLowerCase())
+    )
+    if (cameraInCommonlyUsedCameras.length > 0) {
+        return cameraInCommonlyUsedCameras.map(v => ({ label: v, value: v }))
+    }
     return cameras.filter(
         v => v.toLowerCase().includes(camera.value.camera.toLowerCase())
     ).map(v => ({ label: v, value: v }))
 })
 
 const lensOptions = computed(() => {
+    // check if lens is in commonly used lens
+    const commonlyUsedLens = getCommonlyUsedLens()
+    const lensInCommonlyUsedLens = commonlyUsedLens.filter(
+        v => v.toLowerCase().includes(camera.value.lens.toLowerCase())
+    )
+    if (lensInCommonlyUsedLens.length > 0) {
+        return lensInCommonlyUsedLens.map(v => ({ label: v, value: v }))
+    }
     return lens.filter(
         v => v.toLowerCase().includes(camera.value.lens.toLowerCase())
     ).map(v => ({ label: v, value: v }))
