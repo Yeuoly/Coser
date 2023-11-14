@@ -15,7 +15,7 @@
                                 <NButton type="primary" @click="toDetail(gallery)">仔细康康</NButton>
                             </template>
                             <template #avatar v-if="gallery.images && gallery.images.length > 0">
-                                <NImage style="border-radius: 12px;" :src="gallery.images[0].url" height="200" width="200"
+                                <NImage style="border-radius: 12px;" :src="gallery.images[0].url + '?x-oss-process=image/resize,mfit,h_1600'" height="200" width="200"
                                     object-fit="cover"></NImage>
                             </template>
                             <div>
