@@ -21,6 +21,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/Detail.vue')
     },
     {
+        path: '/galleries/my',
+        name: 'MyGalleries',
+        component: () => import('../views/MyGalleries.vue')
+    },
+    {
         path: '/:catchAll(.*)',
         name: 'NotFound',
         redirect: '/map'

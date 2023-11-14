@@ -174,3 +174,9 @@ export const apiGalleryUpdateImage = (
 }>('/v1/gallery/image/update', RequestMethods.POST, {
     id, key, gallery_id, camera, lens, focal_length, aperture_value, exposure_time, iso
 })
+
+export const apiGalleryGetMy = (key: string) => apiBase<{
+    galleries: Gallery[]
+}>('/v1/gallery/my', RequestMethods.GET, {
+    key
+})

@@ -31,4 +31,5 @@ func Setup(eng *gin.Engine, config *types.CoshubGlobalConfigurations) {
 	eng.POST("/v1/gallery/image/remove", http_controller.HandleGalleryDeleteImage)
 	eng.POST("/v1/gallery/image/update", http_controller.HandleGalleryUpdateImage)
 	eng.POST("/v1/gallery/delete", http_controller.HandleGalleryDelete)
+	eng.GET("/v1/gallery/my", http_controller.HandleGalleryMy)
 }

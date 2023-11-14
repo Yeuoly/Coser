@@ -148,3 +148,13 @@ func HandleGalleryDelete(c *gin.Context) {
 		c.JSON(200, http_service.DeleteGallery(r.ID, r.Key))
 	})
 }
+
+func HandleGalleryMy(c *gin.Context) {
+	type request struct {
+		Key string `json:"key" binding:"required" form:"key"`
+	}
+
+	controller.BindRequest(c, func(r request) {
+		c.JSON(200, http_service.GetMyGallery(r.Key))
+	})
+}

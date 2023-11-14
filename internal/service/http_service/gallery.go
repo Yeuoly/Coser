@@ -420,3 +420,28 @@ func DeleteGallery(id uint, key string) *types.CoshubResponse {
 
 	return types.SuccessResponse(nil)
 }
+
+func GetMyGallery(key string) *types.CoshubResponse {
+	type response struct {
+		Galleries []types.Gallery `json:"galleries"`
+	}
+
+	galleries, err := db.GetAll[types.Gallery](
+		db.Equal("key", key),
+		db.Preload("Images"),
+		db.Preload("Tags"),
+		db.Preload("Place"),
+	)
+
+	if err != nil {
+		return types.ErrorResponse(-500, "internal error")
+	}
+
+	for i := range galleries {
+		galleries[i].ClearSensitive()
+	}
+
+	return types.SuccessResponse(response{
+		Galleries: galleries,
+	})
+}
