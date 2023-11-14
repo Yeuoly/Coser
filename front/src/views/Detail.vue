@@ -231,14 +231,14 @@ const horizontals = computed(() => {
         return []
     }
     // if w : h > 1.5, then it's a horizontal
-    return gallery.value.images.filter(v => v.width / v.height > 1.5)
+    return gallery.value.images.filter(v => v.width / v.height > 1.2)
 })
 const diagonals = computed(() => {
     if (!gallery.value) {
         return []
     }
     // if 0.8 < w : h < 1.5, then it's a diagonal
-    return gallery.value.images.filter(v => v.width / v.height > 0.8 && v.width / v.height < 1.5)
+    return gallery.value.images.filter(v => (v.width / v.height) >= 0.8 && (v.width / v.height) <= 1.2)
 })
 
 const loading = ref(false)
